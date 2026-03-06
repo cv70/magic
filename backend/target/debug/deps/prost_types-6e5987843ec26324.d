@@ -1,0 +1,13 @@
+/home/x/magic/backend/target/debug/deps/prost_types-6e5987843ec26324.d: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/datetime.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/any.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/duration.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/timestamp.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/type_url.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/conversions.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/compiler.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/protobuf.rs
+
+/home/x/magic/backend/target/debug/deps/libprost_types-6e5987843ec26324.rmeta: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/datetime.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/any.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/duration.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/timestamp.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/type_url.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/conversions.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/compiler.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/protobuf.rs
+
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/lib.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/datetime.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/any.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/duration.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/timestamp.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/type_url.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/conversions.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/compiler.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/prost-types-0.13.5/src/protobuf.rs:

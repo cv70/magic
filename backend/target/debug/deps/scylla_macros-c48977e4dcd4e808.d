@@ -1,0 +1,13 @@
+/home/x/magic/backend/target/debug/deps/scylla_macros-c48977e4dcd4e808.d: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/from_row.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/from_user_type.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/into_user_type.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/parser.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/value_list.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/serialize/mod.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/serialize/cql.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/serialize/row.rs
+
+/home/x/magic/backend/target/debug/deps/libscylla_macros-c48977e4dcd4e808.so: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/from_row.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/from_user_type.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/into_user_type.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/parser.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/value_list.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/serialize/mod.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/serialize/cql.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/serialize/row.rs
+
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/lib.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/from_row.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/from_user_type.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/into_user_type.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/parser.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/value_list.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/serialize/mod.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/serialize/cql.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/scylla-macros-0.5.2/src/serialize/row.rs:

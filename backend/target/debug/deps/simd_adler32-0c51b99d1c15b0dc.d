@@ -1,0 +1,13 @@
+/home/x/magic/backend/target/debug/deps/simd_adler32-0c51b99d1c15b0dc.d: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/hash.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/mod.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/avx2.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/avx512.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/scalar.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/sse2.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/ssse3.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/wasm.rs
+
+/home/x/magic/backend/target/debug/deps/libsimd_adler32-0c51b99d1c15b0dc.rmeta: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/hash.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/mod.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/avx2.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/avx512.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/scalar.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/sse2.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/ssse3.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/wasm.rs
+
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/lib.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/hash.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/mod.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/avx2.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/avx512.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/scalar.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/sse2.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/ssse3.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/simd-adler32-0.3.8/src/imp/wasm.rs:

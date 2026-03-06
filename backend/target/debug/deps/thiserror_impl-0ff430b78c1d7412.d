@@ -1,0 +1,14 @@
+/home/x/magic/backend/target/debug/deps/thiserror_impl-0ff430b78c1d7412.d: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/ast.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/attr.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/expand.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/fmt.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/generics.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/prop.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/scan_expr.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/span.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/valid.rs
+
+/home/x/magic/backend/target/debug/deps/libthiserror_impl-0ff430b78c1d7412.so: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/ast.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/attr.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/expand.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/fmt.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/generics.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/prop.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/scan_expr.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/span.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/valid.rs
+
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/lib.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/ast.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/attr.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/expand.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/fmt.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/generics.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/prop.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/scan_expr.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/span.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-impl-1.0.69/src/valid.rs:

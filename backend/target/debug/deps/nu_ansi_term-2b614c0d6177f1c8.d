@@ -1,0 +1,14 @@
+/home/x/magic/backend/target/debug/deps/nu_ansi_term-2b614c0d6177f1c8.d: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/ansi.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/style.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/difference.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/display.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/write.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/util.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/debug.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/gradient.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/rgb.rs
+
+/home/x/magic/backend/target/debug/deps/libnu_ansi_term-2b614c0d6177f1c8.rmeta: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/ansi.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/style.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/difference.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/display.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/write.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/util.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/debug.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/gradient.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/rgb.rs
+
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/lib.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/ansi.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/style.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/difference.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/display.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/write.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/util.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/debug.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/gradient.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nu-ansi-term-0.50.3/src/rgb.rs:

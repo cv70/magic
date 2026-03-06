@@ -1,0 +1,14 @@
+/home/x/magic/backend/target/debug/deps/tracing_core-653eeb4cc3461430.d: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/lazy.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/callsite.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/dispatcher.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/event.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/field.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/metadata.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/parent.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/span.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/subscriber.rs
+
+/home/x/magic/backend/target/debug/deps/libtracing_core-653eeb4cc3461430.rmeta: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/lazy.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/callsite.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/dispatcher.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/event.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/field.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/metadata.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/parent.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/span.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/subscriber.rs
+
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/lib.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/lazy.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/callsite.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/dispatcher.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/event.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/field.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/metadata.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/parent.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/span.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/tracing-core-0.1.36/src/subscriber.rs:

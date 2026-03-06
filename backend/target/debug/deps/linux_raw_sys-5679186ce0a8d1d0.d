@@ -1,0 +1,12 @@
+/home/x/magic/backend/target/debug/deps/linux_raw_sys-5679186ce0a8d1d0.d: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/elf.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/x86_64/auxvec.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/x86_64/errno.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/x86_64/general.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/x86_64/ioctl.rs
+
+/home/x/magic/backend/target/debug/deps/liblinux_raw_sys-5679186ce0a8d1d0.rlib: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/elf.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/x86_64/auxvec.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/x86_64/errno.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/x86_64/general.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/x86_64/ioctl.rs
+
+/home/x/magic/backend/target/debug/deps/liblinux_raw_sys-5679186ce0a8d1d0.rmeta: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/elf.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/x86_64/auxvec.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/x86_64/errno.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/x86_64/general.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/x86_64/ioctl.rs
+
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/lib.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/elf.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/x86_64/auxvec.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/x86_64/errno.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/x86_64/general.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/linux-raw-sys-0.12.1/src/x86_64/ioctl.rs:

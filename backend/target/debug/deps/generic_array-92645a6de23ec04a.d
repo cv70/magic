@@ -1,0 +1,13 @@
+/home/x/magic/backend/target/debug/deps/generic_array-92645a6de23ec04a.d: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/hex.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/impls.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/arr.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/functional.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/iter.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/sequence.rs
+
+/home/x/magic/backend/target/debug/deps/libgeneric_array-92645a6de23ec04a.rlib: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/hex.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/impls.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/arr.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/functional.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/iter.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/sequence.rs
+
+/home/x/magic/backend/target/debug/deps/libgeneric_array-92645a6de23ec04a.rmeta: /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/lib.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/hex.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/impls.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/arr.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/functional.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/iter.rs /home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/sequence.rs
+
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/lib.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/hex.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/impls.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/arr.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/functional.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/iter.rs:
+/home/x/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/src/sequence.rs:
