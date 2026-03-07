@@ -102,9 +102,13 @@ ai-content-engine/
 ├── .prettierrc          # Prettier 配置
 ├── .eslintrc.js         # ESLint 配置
 ├── .dockerignore
-├── ARCHITECTURE.md      # 架构文档
-├── DOMAIN.md            # 领域层文档
-└── README.md            # 项目说明
+├── README.md            # 项目说明（本文件）
+├── ARCHITECTURE.md      # 系统架构设计文档
+├── DOMAIN.md            # 领域驱动设计文档
+├── PRODUCT.md           # 产品设计和功能文档 ⭐ NEW
+├── ROADMAP.md           # 产品路线图和迭代计划 ⭐ NEW
+└── docs/                # 其他文档
+    └── ...
 ```
 
 ## API 文档
@@ -172,6 +176,40 @@ go run cmd/server/main.go --config ./config.yaml
 - 🔒 敏感信息加密
 - 🔒 权限控制
 - 🔒 速率限制
+
+## 📚 文档导航
+
+本项目包含完整的产品和技术文档体系（共9份，110KB+）：
+
+### 核心文档（必读）
+
+| 文档 | 描述 | 适合人群 | 大小 |
+|------|------|---------|------|
+| **[PRODUCT.md](./PRODUCT.md)** | 完整的产品设计方案（定位、功能、竞争力、UI/UX） | 产品、设计、业务 | 17KB |
+| **[ROADMAP.md](./ROADMAP.md)** | 三阶段迭代计划、优先级排序、资源规划 | 项目经理、技术负责人 | 22KB |
+| **[TECH_DESIGN.md](./TECH_DESIGN.md)** | 详细的技术实现方案（DB、API、组件、代码规范） | 后端、前端工程师 | 37KB |
+| **[TASKS.md](./TASKS.md)** | 具体的任务清单（100+个任务、优先级、工作量）| 任务分配、进度跟踪 | 13KB |
+
+### 参考文档
+
+| 文档 | 描述 | 用途 |
+|------|------|------|
+| **[PROGRESS.md](./PROGRESS.md)** | 开发进度报告（已完成/待完成、进度统计) | 进度跟踪 |
+| **[OPTIMIZATION.md](./OPTIMIZATION.md)** | 优化建议摘要（问题分析、改进方案) | 快速了解产品改进点 |
+| **[ARCHITECTURE.md](./ARCHITECTURE.md)** | 系统架构（架构图、模块设计、技术栈） | 系统设计参考 |
+| **[DOMAIN.md](./DOMAIN.md)** | DDD设计（domain结构、实现模式） | 后端架构参考 |
+
+### 推荐阅读顺序
+
+**产品团队**：PRODUCT.md → ROADMAP.md → PROGRESS.md
+
+**开发团队**：TECH_DESIGN.md → TASKS.md → ARCHITECTURE.md
+
+**技术负责人**：ROADMAP.md → TECH_DESIGN.md → PROGRESS.md
+
+**快速了解（5分钟）**：OPTIMIZATION.md
+
+---
 
 ## 常见问题
 

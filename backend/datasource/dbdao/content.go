@@ -105,7 +105,7 @@ func (d *DB) SearchContents(
 	for i, model := range models {
 		var tags []string
 		if len(model.Tags) > 0 {
-			if err := json.Unmarshal(model.Tags, &tags); err != nil {
+			if err := json.Unmarshal([]byte(model.Tags), &tags); err != nil {
 				tags = []string{}
 			}
 		}

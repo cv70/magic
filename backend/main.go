@@ -30,12 +30,24 @@ func main() {
 	r := gin.Default()
 	v1 := r.Group("/api/v1")
 
-	// 内容模块
+	// 内容和草稿模块
 	{
-		contentDomain := content.NewContentDomain(registry.DB)
+		contentDomain := content.NewContentDomainWithDB(registry.DB)
+
+		// 草稿 API
+		v1.POST("/drafts/create", contentDomain.ApiCreateDraft)
+		v1.POST("/drafts/get", contentDomain.ApiGetDraft)
+		v1.POST("/drafts/search", contentDomain.ApiSearchDrafts)
+		v1.POST("/drafts/update", contentDomain.ApiUpdateDraft)
+		v1.POST("/drafts/delete", contentDomain.ApiDeleteDraft)
+		v1.POST("/drafts/:id/versions", contentDomain.ApiGetDraftVersions)
+		v1.POST("/drafts/:id/revert/:version", contentDomain.ApiRevertDraftVersion)
+		v1.POST("/drafts/:id/publish", contentDomain.ApiPublishDraft)
+
+		// 内容 API
+		v1.POST("/content/create", contentDomain.ApiCreateContent)
 		v1.POST("/content/get", contentDomain.ApiGetContent)
 		v1.POST("/content/search", contentDomain.ApiSearchContents)
-		v1.POST("/content/add", contentDomain.ApiAddContent)
 		v1.POST("/content/update", contentDomain.ApiUpdateContent)
 		v1.POST("/content/delete", contentDomain.ApiDeleteContent)
 	}
