@@ -284,3 +284,24 @@ func (d *AIGenerationDomain) UpdatePromptTemplate(
 		CreatedAt:      &updated.CreatedAt,
 	}, nil
 }
+
+// ===================== Generate Task Methods =====================
+
+func (d *AIGenerationDomain) GetGenerateTask(ctx context.Context, id int64) (*GenerateTask, error) {
+	task, err := d.DB.GetGenerateTask(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &GenerateTask{
+		ID:          task.ID,
+		GeneratorID: task.GeneratorID,
+		Input:       task.Input,
+		Output:      task.Output,
+		Status:      task.Status,
+		Error:       task.Error,
+		CreatedAt:   &task.CreatedAt,
+		StartedAt:   task.StartedAt,
+		CompletedAt: task.CompletedAt,
+	}, nil
+}

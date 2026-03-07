@@ -149,3 +149,31 @@ type UpdatePermissionReq struct {
 type UpdatePermissionRes struct {
 	ID int64 `json:"id"`
 }
+
+// ===================== Authentication API =====================
+
+type LoginReq struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+type LoginRes struct {
+	Token string `json:"token"`
+	User  *User  `json:"user"`
+}
+
+type RegisterReq struct {
+	Username string `json:"username" binding:"required"`
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+type RegisterRes struct {
+	Token string `json:"token"`
+	User  *User  `json:"user"`
+}
+
+type MeRes struct {
+	User *User `json:"user"`
+}
+

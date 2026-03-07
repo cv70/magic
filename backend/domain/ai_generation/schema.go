@@ -136,3 +136,14 @@ type UpdatePromptTemplateReq struct {
 type UpdatePromptTemplateRes struct {
 	ID int64 `json:"id"`
 }
+
+// ===================== Generate Task API =====================
+
+type GetGenerateTaskReq struct {
+	ID int64 `json:"id" binding:"required"`
+}
+
+type GetGenerateTaskRes struct {
+	GenerateTask *GenerateTask `json:"generate_task"`
+}
+

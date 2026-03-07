@@ -30,96 +30,117 @@ func main() {
 	r := gin.Default()
 	v1 := r.Group("/api/v1")
 
+	// ===================== Authentication Routes (无需认证) =====================
+	{
+		identityDomain := identity.NewIdentityDomain(registry.DB)
+		v1.POST("/auth/login", identityDomain.ApiLogin)
+		v1.POST("/auth/register", identityDomain.ApiRegister)
+	}
+
+	// ===================== Protected Routes (需要认证) =====================
+	protected := v1.Group("/")
+	protected.Use(infra.AuthMiddleware())
+
+	// 认证用户信息
+	{
+		identityDomain := identity.NewIdentityDomain(registry.DB)
+		protected.POST("/auth/me", identityDomain.ApiMe)
+	}
+
 	// 内容和草稿模块
 	{
 		contentDomain := content.NewContentDomainWithDB(registry.DB)
 
 		// 草稿 API
-		v1.POST("/drafts/create", contentDomain.ApiCreateDraft)
-		v1.POST("/drafts/get", contentDomain.ApiGetDraft)
-		v1.POST("/drafts/search", contentDomain.ApiSearchDrafts)
-		v1.POST("/drafts/update", contentDomain.ApiUpdateDraft)
-		v1.POST("/drafts/delete", contentDomain.ApiDeleteDraft)
-		v1.POST("/drafts/:id/versions", contentDomain.ApiGetDraftVersions)
-		v1.POST("/drafts/:id/revert/:version", contentDomain.ApiRevertDraftVersion)
-		v1.POST("/drafts/:id/publish", contentDomain.ApiPublishDraft)
+		protected.POST("/drafts/create", contentDomain.ApiCreateDraft)
+		protected.POST("/drafts/get", contentDomain.ApiGetDraft)
+		protected.POST("/drafts/search", contentDomain.ApiSearchDrafts)
+		protected.POST("/drafts/update", contentDomain.ApiUpdateDraft)
+		protected.POST("/drafts/delete", contentDomain.ApiDeleteDraft)
+		protected.POST("/drafts/:id/versions", contentDomain.ApiGetDraftVersions)
+		protected.POST("/drafts/:id/revert/:version", contentDomain.ApiRevertDraftVersion)
+		protected.POST("/drafts/:id/publish", contentDomain.ApiPublishDraft)
 
 		// 内容 API
-		v1.POST("/content/create", contentDomain.ApiCreateContent)
-		v1.POST("/content/get", contentDomain.ApiGetContent)
-		v1.POST("/content/search", contentDomain.ApiSearchContents)
-		v1.POST("/content/update", contentDomain.ApiUpdateContent)
-		v1.POST("/content/delete", contentDomain.ApiDeleteContent)
+		protected.POST("/content/create", contentDomain.ApiCreateContent)
+		protected.POST("/content/get", contentDomain.ApiGetContent)
+		protected.POST("/content/search", contentDomain.ApiSearchContents)
+		protected.POST("/content/update", contentDomain.ApiUpdateContent)
+		protected.POST("/content/delete", contentDomain.ApiDeleteContent)
 	}
 
 	// AI 生成模块
 	{
 		aiDomain := ai_generation.NewAIGenerationDomain(registry.DB)
-		v1.POST("/ai/generator/get", aiDomain.ApiGetGenerator)
-		v1.POST("/ai/generator/search", aiDomain.ApiSearchGenerators)
-		v1.POST("/ai/generator/add", aiDomain.ApiAddGenerator)
-		v1.POST("/ai/generator/update", aiDomain.ApiUpdateGenerator)
-		v1.POST("/ai/generate", aiDomain.ApiGenerateContent)
-		v1.POST("/ai/prompt-template/get", aiDomain.ApiGetPromptTemplate)
-		v1.POST("/ai/prompt-template/search", aiDomain.ApiSearchPromptTemplates)
-		v1.POST("/ai/prompt-template/add", aiDomain.ApiAddPromptTemplate)
-		v1.POST("/ai/prompt-template/update", aiDomain.ApiUpdatePromptTemplate)
+		protected.POST("/ai/generator/get", aiDomain.ApiGetGenerator)
+		protected.POST("/ai/generator/search", aiDomain.ApiSearchGenerators)
+		protected.POST("/ai/generator/add", aiDomain.ApiAddGenerator)
+		protected.POST("/ai/generator/update", aiDomain.ApiUpdateGenerator)
+		protected.POST("/ai/generate", aiDomain.ApiGenerateContent)
+		protected.POST("/ai/task/get", aiDomain.ApiGetGenerateTask)
+		protected.POST("/ai/prompt-template/get", aiDomain.ApiGetPromptTemplate)
+		protected.POST("/ai/prompt-template/search", aiDomain.ApiSearchPromptTemplates)
+		protected.POST("/ai/prompt-template/add", aiDomain.ApiAddPromptTemplate)
+		protected.POST("/ai/prompt-template/update", aiDomain.ApiUpdatePromptTemplate)
 	}
 
 	// 配置模块
 	{
 		configDomain := configuration.NewConfigurationDomain(registry.DB)
-		v1.POST("/config/system/get", configDomain.ApiGetSystemConfig)
-		v1.POST("/config/system/search", configDomain.ApiSearchSystemConfigs)
-		v1.POST("/config/system/add", configDomain.ApiAddSystemConfig)
-		v1.POST("/config/system/update", configDomain.ApiUpdateSystemConfig)
-		v1.POST("/config/provider/get", configDomain.ApiGetProviderConfig)
-		v1.POST("/config/provider/search", configDomain.ApiSearchProviderConfigs)
-		v1.POST("/config/provider/add", configDomain.ApiAddProviderConfig)
-		v1.POST("/config/provider/update", configDomain.ApiUpdateProviderConfig)
+		protected.POST("/config/system/get", configDomain.ApiGetSystemConfig)
+		protected.POST("/config/system/search", configDomain.ApiSearchSystemConfigs)
+		protected.POST("/config/system/add", configDomain.ApiAddSystemConfig)
+		protected.POST("/config/system/update", configDomain.ApiUpdateSystemConfig)
+		protected.POST("/config/provider/get", configDomain.ApiGetProviderConfig)
+		protected.POST("/config/provider/search", configDomain.ApiSearchProviderConfigs)
+		protected.POST("/config/provider/add", configDomain.ApiAddProviderConfig)
+		protected.POST("/config/provider/update", configDomain.ApiUpdateProviderConfig)
 	}
 
-	// 身份认证模块
+	// 身份认证模块 (Admin)
 	{
 		identityDomain := identity.NewIdentityDomain(registry.DB)
-		v1.POST("/identity/user/get", identityDomain.ApiGetUser)
-		v1.POST("/identity/user/search", identityDomain.ApiSearchUsers)
-		v1.POST("/identity/user/add", identityDomain.ApiAddUser)
-		v1.POST("/identity/user/update", identityDomain.ApiUpdateUser)
-		v1.POST("/identity/role/get", identityDomain.ApiGetRole)
-		v1.POST("/identity/role/search", identityDomain.ApiSearchRoles)
-		v1.POST("/identity/role/add", identityDomain.ApiAddRole)
-		v1.POST("/identity/role/update", identityDomain.ApiUpdateRole)
-		v1.POST("/identity/permission/get", identityDomain.ApiGetPermission)
-		v1.POST("/identity/permission/search", identityDomain.ApiSearchPermissions)
-		v1.POST("/identity/permission/add", identityDomain.ApiAddPermission)
-		v1.POST("/identity/permission/update", identityDomain.ApiUpdatePermission)
+		protected.POST("/identity/user/get", identityDomain.ApiGetUser)
+		protected.POST("/identity/user/search", identityDomain.ApiSearchUsers)
+		protected.POST("/identity/user/add", identityDomain.ApiAddUser)
+		protected.POST("/identity/user/update", identityDomain.ApiUpdateUser)
+		protected.POST("/identity/role/get", identityDomain.ApiGetRole)
+		protected.POST("/identity/role/search", identityDomain.ApiSearchRoles)
+		protected.POST("/identity/role/add", identityDomain.ApiAddRole)
+		protected.POST("/identity/role/update", identityDomain.ApiUpdateRole)
+		protected.POST("/identity/permission/get", identityDomain.ApiGetPermission)
+		protected.POST("/identity/permission/search", identityDomain.ApiSearchPermissions)
+		protected.POST("/identity/permission/add", identityDomain.ApiAddPermission)
+		protected.POST("/identity/permission/update", identityDomain.ApiUpdatePermission)
 	}
 
 	// 发布模块
 	{
 		publishingDomain := publishing.NewPublishingDomain(registry.DB)
-		v1.POST("/publish/publisher/get", publishingDomain.ApiGetPublisher)
-		v1.POST("/publish/publisher/search", publishingDomain.ApiSearchPublishers)
-		v1.POST("/publish/publisher/add", publishingDomain.ApiAddPublisher)
-		v1.POST("/publish/publisher/update", publishingDomain.ApiUpdatePublisher)
-		v1.POST("/publish/content", publishingDomain.ApiPublishContent)
-		v1.POST("/publish/task/get", publishingDomain.ApiGetPublishTask)
-		v1.POST("/publish/task/search", publishingDomain.ApiSearchPublishTasks)
-		v1.POST("/publish/log/get", publishingDomain.ApiGetPublishLog)
-		v1.POST("/publish/log/search", publishingDomain.ApiSearchPublishLogs)
+		protected.POST("/publish/publisher/get", publishingDomain.ApiGetPublisher)
+		protected.POST("/publish/publisher/search", publishingDomain.ApiSearchPublishers)
+		protected.POST("/publish/publisher/add", publishingDomain.ApiAddPublisher)
+		protected.POST("/publish/publisher/update", publishingDomain.ApiUpdatePublisher)
+		protected.POST("/publish/content", publishingDomain.ApiPublishContent)
+		protected.POST("/publish/task/get", publishingDomain.ApiGetPublishTask)
+		protected.POST("/publish/task/search", publishingDomain.ApiSearchPublishTasks)
+		protected.POST("/publish/log/get", publishingDomain.ApiGetPublishLog)
+		protected.POST("/publish/log/search", publishingDomain.ApiSearchPublishLogs)
+		protected.POST("/analytics/summary", publishingDomain.ApiAnalyticsSummary)
+		protected.POST("/analytics/ranking", publishingDomain.ApiAnalyticsRanking)
+		protected.POST("/analytics/platform-comparison", publishingDomain.ApiAnalyticsPlatformComparison)
 	}
 
 	// 调度模块
 	{
 		schedulingDomain := scheduling.NewSchedulingDomain(registry.DB)
-		v1.POST("/scheduling/task/get", schedulingDomain.ApiGetTask)
-		v1.POST("/scheduling/task/search", schedulingDomain.ApiSearchTasks)
-		v1.POST("/scheduling/task/add", schedulingDomain.ApiAddTask)
-		v1.POST("/scheduling/task/update", schedulingDomain.ApiUpdateTask)
-		v1.POST("/scheduling/task/run", schedulingDomain.ApiRunTask)
-		v1.POST("/scheduling/task/stop", schedulingDomain.ApiStopTask)
-		v1.POST("/scheduling/task/restart", schedulingDomain.ApiRestartTask)
+		protected.POST("/scheduling/task/get", schedulingDomain.ApiGetTask)
+		protected.POST("/scheduling/task/search", schedulingDomain.ApiSearchTasks)
+		protected.POST("/scheduling/task/add", schedulingDomain.ApiAddTask)
+		protected.POST("/scheduling/task/update", schedulingDomain.ApiUpdateTask)
+		protected.POST("/scheduling/task/run", schedulingDomain.ApiRunTask)
+		protected.POST("/scheduling/task/stop", schedulingDomain.ApiStopTask)
+		protected.POST("/scheduling/task/restart", schedulingDomain.ApiRestartTask)
 	}
 
 	err = r.Run(":8888")

@@ -124,3 +124,49 @@ type SearchPublishLogsRes struct {
 	PublishLogs []*PublishLog `json:"publish_logs"`
 	Total       int64         `json:"total"`
 }
+
+// ===================== Analytics API =====================
+
+type AnalyticsSummaryReq struct {
+	Days int `json:"days"`
+}
+
+type AnalyticsSummaryRes struct {
+	TotalPublished    int64 `json:"total_published"`
+	TotalViews        int64 `json:"total_views"`
+	TotalLikes        int64 `json:"total_likes"`
+	TotalComments     int64 `json:"total_comments"`
+	AvgLikesPerPost   int64 `json:"avg_likes_per_post"`
+	TotalNewFollowers int64 `json:"total_new_followers"`
+}
+
+type ContentRankingItem struct {
+	ContentID int64  `json:"content_id"`
+	Title     string `json:"title"`
+	Views     int64  `json:"views"`
+	Likes     int64  `json:"likes"`
+	Comments  int64  `json:"comments"`
+}
+
+type AnalyticsRankingReq struct {
+	Metric string `json:"metric"`
+	Days   int    `json:"days"`
+	Limit  int    `json:"limit"`
+}
+
+type AnalyticsRankingRes struct {
+	Data []*ContentRankingItem `json:"data"`
+}
+
+type PlatformMetrics struct {
+	Platform  string `json:"platform"`
+	Count     int64  `json:"count"`
+	Success   int64  `json:"success"`
+	Failed    int64  `json:"failed"`
+	SuccessRate float64 `json:"success_rate"`
+}
+
+type AnalyticsPlatformComparisonRes struct {
+	Data []*PlatformMetrics `json:"data"`
+}
+

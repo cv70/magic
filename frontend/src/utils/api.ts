@@ -47,12 +47,36 @@ export async function request<T>(
   return result.data as T
 }
 
+// ===================== Auth API =====================
+
+export const authApi = {
+  // 用户登录
+  login: (username: string, password: string) =>
+    request<{ token: string; user: { id: number; username: string; email: string } }>(
+      'POST',
+      '/auth/login',
+      { username, password }
+    ),
+
+  // 用户注册
+  register: (username: string, email: string, password: string) =>
+    request<{ token: string; user: { id: number; username: string; email: string } }>(
+      'POST',
+      '/auth/register',
+      { username, email, password }
+    ),
+
+  // 获取当前用户信息
+  me: () =>
+    request<{ id: number; username: string; email: string }>('POST', '/auth/me', {}),
+}
+
 // ===================== Draft API =====================
 
 export const draftApi = {
   // 创建草稿
   create: (data: { title: string; content?: string; content_type?: string; tags?: string[] }) =>
-    request<{ id: number; title: string; created_at: string }>('POST', '/drafts', data),
+    request<{ id: number; title: string; created_at: string }>('POST', '/drafts/create', data),
 
   // 获取草稿列表
   list: (page = 1, limit = 20, keyword?: string, status?: string) =>
@@ -166,7 +190,7 @@ export const publishApi = {
 
 export const analyticsApi = {
   // 获取统计摘要
-  summary: (period?: string) =>
+  summary: (options?: { days?: number }) =>
     request<{
       period: string
       total_published: number
@@ -175,11 +199,15 @@ export const analyticsApi = {
       total_comments: number
       avg_likes_per_post: number
       total_new_followers: number
-    }>('POST', '/analytics/summary', { period }),
+    }>('POST', '/analytics/summary', { days: options?.days || 30 }),
 
   // 获取内容排行
-  ranking: (metric = 'views', days = 30, limit = 10) =>
-    request<{ data: any[] }>('POST', '/analytics/ranking', { metric, days, limit }),
+  ranking: (options?: { metric?: string; days?: number; limit?: number }) =>
+    request<{ data: any[] }>('POST', '/analytics/ranking', {
+      metric: options?.metric || 'views',
+      days: options?.days || 30,
+      limit: options?.limit || 10,
+    }),
 
   // 平台对比
   platformComparison: () => request<{ data: any[] }>('POST', '/analytics/platform-comparison', {}),
@@ -239,7 +267,7 @@ export const promptApi = {
     request<PromptTemplate>('POST', '/prompt-templates/create', data),
 
   // 删除模板
-  delete: (id: number) => request<{ success: boolean }>('POST', `/prompt-templates/${id}/delete', {}),
+  delete: (id: number) => request<{ success: boolean }>('POST', `/prompt-templates/${id}/delete`, {}),
 }
 
 // ===================== WebSocket 连接 =====================

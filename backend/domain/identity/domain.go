@@ -2,6 +2,7 @@ package identity
 
 import (
 	"backend/datasource/dbdao"
+	"backend/utils"
 	"context"
 	"errors"
 )
@@ -270,4 +271,76 @@ func (d *IdentityDomain) UpdatePermission(ctx context.Context, id int64, name, d
 		Description: updated.Description,
 		CreatedAt:   &updated.CreatedAt,
 	}, nil
+}
+
+// ===================== Authentication Methods =====================
+
+// Login 用户登录
+func (d *IdentityDomain) Login(ctx context.Context, username, password string) (*User, string, error) {
+	// 查询用户
+	users, _, err := d.DB.SearchIdentityUsers(ctx, username, "", "", 1, 1)
+	if err != nil || len(users) == 0 {
+		return nil, "", errors.New("user not found or password incorrect")
+	}
+
+	user := users[0]
+
+	// 验证密码
+	if !utils.VerifyPassword(user.Password, password) {
+		return nil, "", errors.New("user not found or password incorrect")
+	}
+
+	// 生成 token
+	token := utils.GenerateToken(user.ID, user.Email)
+
+	return &User{
+		ID:        user.ID,
+		Username:  user.Username,
+		Email:     user.Email,
+		Password:  "", // 不返回密码哈希值
+		Role:      user.Role,
+		Enabled:   user.Enabled,
+		CreatedAt: &user.CreatedAt,
+	}, token, nil
+}
+
+// Register 用户注册
+func (d *IdentityDomain) Register(ctx context.Context, username, email, password string) (*User, string, error) {
+	// 检查用户名或邮箱是否已存在
+	users, _, err := d.DB.SearchIdentityUsers(ctx, username, "", "", 1, 1)
+	if err == nil && len(users) > 0 {
+		return nil, "", errors.New("username already exists")
+	}
+
+	// 创建新用户
+	hashedPassword := utils.HashPassword(password)
+	id, err := d.DB.AddIdentityUser(ctx, &dbdao.IdentityUser{
+		Username: username,
+		Email:    email,
+		Password: hashedPassword,
+		Role:     "user",
+		Enabled:  true,
+	})
+	if err != nil {
+		return nil, "", err
+	}
+
+	// 获取刚创建的用户
+	newUser, err := d.DB.GetIdentityUser(ctx, id)
+	if err != nil {
+		return nil, "", err
+	}
+
+	// 生成 token
+	token := utils.GenerateToken(newUser.ID, newUser.Email)
+
+	return &User{
+		ID:        newUser.ID,
+		Username:  newUser.Username,
+		Email:     newUser.Email,
+		Password:  "", // 不返回密码哈希值
+		Role:      newUser.Role,
+		Enabled:   newUser.Enabled,
+		CreatedAt: &newUser.CreatedAt,
+	}, token, nil
 }

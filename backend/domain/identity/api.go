@@ -192,3 +192,59 @@ func (d *IdentityDomain) ApiUpdatePermission(c *gin.Context) {
 	}
 	utils.RespSuccess(c, UpdatePermissionRes{ID: perm.ID})
 }
+
+// ===================== Authentication API Handlers =====================
+
+func (d *IdentityDomain) ApiLogin(c *gin.Context) {
+	var req LoginReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.RespError(c, 400, "failed to parse body")
+		return
+	}
+
+	user, token, err := d.Login(c, req.Username, req.Password)
+	if err != nil {
+		klog.Errorf("login failed: %v", err)
+		utils.RespError(c, 401, "invalid username or password")
+		return
+	}
+
+	utils.RespSuccess(c, LoginRes{Token: token, User: user})
+}
+
+func (d *IdentityDomain) ApiRegister(c *gin.Context) {
+	var req RegisterReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.RespError(c, 400, "failed to parse body")
+		return
+	}
+
+	user, token, err := d.Register(c, req.Username, req.Email, req.Password)
+	if err != nil {
+		klog.Errorf("register failed: %v", err)
+		utils.RespError(c, 400, err.Error())
+		return
+	}
+
+	utils.RespSuccess(c, RegisterRes{Token: token, User: user})
+}
+
+func (d *IdentityDomain) ApiMe(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		utils.RespError(c, 401, "unauthorized")
+		return
+	}
+
+	user, err := d.GetUser(c, userID.(int64))
+	if err != nil {
+		klog.Errorf("get user failed: %v", err)
+		utils.RespError(c, 500, "failed to get user")
+		return
+	}
+
+	// 不返回密码
+	user.Password = ""
+
+	utils.RespSuccess(c, MeRes{User: user})
+}

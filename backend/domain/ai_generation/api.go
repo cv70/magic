@@ -186,3 +186,24 @@ func (d *AIGenerationDomain) ApiUpdatePromptTemplate(c *gin.Context) {
 
 	utils.RespSuccess(c, UpdatePromptTemplateRes{ID: pt.ID})
 }
+
+// ===================== Generate Task API Handlers =====================
+
+func (d *AIGenerationDomain) ApiGetGenerateTask(c *gin.Context) {
+	var req GetGenerateTaskReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		klog.Errorf("failed to parse body: %v", err)
+		utils.RespError(c, 400, "failed to parse body")
+		return
+	}
+
+	task, err := d.GetGenerateTask(c, req.ID)
+	if err != nil {
+		klog.Errorf("failed to get generate task: %v", err)
+		utils.RespError(c, 500, "failed to get generate task")
+		return
+	}
+
+	utils.RespSuccess(c, GetGenerateTaskRes{GenerateTask: task})
+}
+
