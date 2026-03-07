@@ -8,12 +8,8 @@ import { Dashboard } from './pages/Dashboard'
 import { DraftCenter } from './pages/DraftCenter'
 import { Editor } from './pages/Editor'
 import { PublishManager } from './pages/PublishManager'
+import { Analytics } from './pages/Analytics'
 import { useAuthStore } from './stores/authStore'
-
-// 临时占位符页面
-function AnalyticsPlaceholder() {
-  return <div style={{ padding: 24 }}>分析页面 - 开发中</div>
-}
 
 function App() {
   const { init } = useAuthStore()
@@ -41,7 +37,7 @@ function App() {
         <Route path="drafts" element={<DraftCenter />} />
         <Route path="drafts/:id/edit" element={<Editor />} />
         <Route path="drafts/new" element={<Editor />} />
-        <Route path="analytics" element={<AnalyticsPlaceholder />} />
+        <Route path="analytics" element={<Analytics />} />
         <Route path="publish" element={<PublishManager />} />
       </Route>
 
