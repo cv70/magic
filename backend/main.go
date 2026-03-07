@@ -8,6 +8,7 @@ import (
 	"backend/domain/identity"
 	"backend/domain/publishing"
 	"backend/domain/scheduling"
+	"backend/domain/square"
 	"backend/infra"
 	"context"
 
@@ -141,6 +142,20 @@ func main() {
 		protected.POST("/scheduling/task/run", schedulingDomain.ApiRunTask)
 		protected.POST("/scheduling/task/stop", schedulingDomain.ApiStopTask)
 		protected.POST("/scheduling/task/restart", schedulingDomain.ApiRestartTask)
+	}
+
+	// 内容广场模块
+	{
+		squareDomain := square.NewSquareDomainWithDB(registry.DB)
+		protected.POST("/square/posts", squareDomain.ApiListSquarePosts)
+		protected.POST("/square/posts/get", squareDomain.ApiGetSquarePost)
+		protected.POST("/square/publish", squareDomain.ApiPublishToSquare)
+		protected.POST("/square/like", squareDomain.ApiLike)
+		protected.POST("/square/unlike", squareDomain.ApiUnlike)
+		protected.POST("/square/collect", squareDomain.ApiCollect)
+		protected.POST("/square/uncollect", squareDomain.ApiUncollect)
+		protected.POST("/square/comment", squareDomain.ApiAddComment)
+		protected.POST("/square/comments", squareDomain.ApiGetComments)
 	}
 
 	err = r.Run(":8888")

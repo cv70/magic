@@ -75,7 +75,7 @@ export const authApi = {
 
 export const draftApi = {
   // 创建草稿
-  create: (data: { title: string; content?: string; content_type?: string; tags?: string[] }) =>
+  create: (data: { title: string; content?: string; content_type?: string; tags?: string[]; metadata?: Record<string, any> }) =>
     request<{ id: number; title: string; created_at: string }>('POST', '/drafts/create', data),
 
   // 获取草稿列表
@@ -333,3 +333,54 @@ export function connectPublishStatus(taskId: number, onUpdate: (data: any) => vo
     ws.close()
   }
 }
+
+// ===================== 内容广场 API =====================
+
+export const squareApi = {
+  // 获取广场内容列表
+  list: (params: {
+    domain?: string
+    keyword?: string
+    sort?: 'newest' | 'hottest' | 'trending'
+    page: number
+    page_size: number
+  }) =>
+    request<{ data: any[]; total: number }>('POST', '/square/posts', params),
+
+  // 获取内容详情
+  get: (id: number) =>
+    request<any>('POST', '/square/posts/get', { id }),
+
+  // 将草稿发布到广场
+  publish: (draftId: number) =>
+    request<{ id: number }>('POST', '/square/publish', { draft_id: draftId }),
+
+  // 点赞内容
+  like: (postId: number) =>
+    request<{ success: boolean }>('POST', '/square/like', { post_id: postId }),
+
+  // 取消点赞
+  unlike: (postId: number) =>
+    request<{ success: boolean }>('POST', '/square/unlike', { post_id: postId }),
+
+  // 收藏内容
+  collect: (postId: number) =>
+    request<{ success: boolean }>('POST', '/square/collect', { post_id: postId }),
+
+  // 取消收藏
+  uncollect: (postId: number) =>
+    request<{ success: boolean }>('POST', '/square/uncollect', { post_id: postId }),
+
+  // 发表评论
+  comment: (postId: number, content: string) =>
+    request<{ id: number }>('POST', '/square/comment', { post_id: postId, content }),
+
+  // 获取评论列表
+  getComments: (postId: number, page: number = 1, pageSize: number = 20) =>
+    request<{ data: any[]; total: number }>('POST', '/square/comments', {
+      post_id: postId,
+      page,
+      page_size: pageSize
+    }),
+}
+

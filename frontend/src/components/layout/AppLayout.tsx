@@ -1,7 +1,8 @@
-import { Layout, Menu, Dropdown, Avatar, Space, Breadcrumb } from 'antd'
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons'
+import { Layout, Menu, Dropdown, Avatar, Space, Breadcrumb, Switch } from 'antd'
+import { LogoutOutlined, SettingOutlined, UserOutlined, BgColorsOutlined, GlobalOutlined } from '@ant-design/icons'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/authStore'
+import { useThemeStore } from '../../stores/themeStore'
 
 const { Sider, Header, Content } = Layout
 
@@ -26,6 +27,7 @@ const menuItems: any[] = [
       { key: '/analytics', label: '数据分析' },
     ],
   },
+  { key: '/square', label: '内容广场', icon: <GlobalOutlined />, title: '内容广场' },
   { key: '/settings', label: '设置', title: '设置' },
 ]
 
@@ -33,6 +35,7 @@ export function AppLayout() {
   const location = useLocation()
   const navigate = useNavigate()
   const { user, logout } = useAuthStore()
+  const { isDarkMode, toggleDarkMode } = useThemeStore()
 
   const selectedKey = menuItems.find((item) => item.key === location.pathname)?.key ||
     menuItems.flatMap((item) => item.children || []).find((item) => item.key === location.pathname)?.key ||
@@ -48,6 +51,17 @@ export function AppLayout() {
       key: 'profile',
       icon: <UserOutlined />,
       label: '个人资料',
+    },
+    {
+      key: 'theme',
+      label: (
+        <Space>
+          <BgColorsOutlined />
+          <span>深色模式</span>
+          <Switch size="small" checked={isDarkMode} onChange={toggleDarkMode} />
+        </Space>
+      ),
+      disabled: true,
     },
     {
       key: 'settings',
@@ -72,6 +86,7 @@ export function AppLayout() {
     '/ai-studio': ['内容创作', 'AI工作室'],
     '/publish': ['发布运营', '发布管理'],
     '/analytics': ['发布运营', '数据分析'],
+    '/square': ['内容广场'],
     '/settings': ['系统', '设置'],
   }
 

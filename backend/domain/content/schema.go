@@ -13,7 +13,8 @@ type Draft struct {
 	ContentType   string     `json:"content_type" gorm:"size:20"` // text/code/image等
 	Status        string     `json:"status" gorm:"size:20"`       // draft/archived
 	Tags          string     `json:"tags" gorm:"type:json"`       // JSON数组
-	Metadata      string     `json:"metadata" gorm:"type:json"`   // 自定义元数据
+	Metadata      string     `json:"metadata" gorm:"type:json"`   // 自定义元数据（包括 domain）
+	Domain        string     `json:"domain" gorm:"size:50;index"` // 内容领域分类（film-drama, ai-comics 等）
 	LastEditedAt  *time.Time `json:"last_edited_at"`
 	SavedVersionID *int64    `json:"saved_version_id"`
 	CreatedAt     *time.Time `json:"created_at"`

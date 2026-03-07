@@ -1,0 +1,61 @@
+.container {
+  padding: 8px 0;
+}
+
+.domainCard {
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid transparent !important;
+}
+
+.domainCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.domainCard.selected {
+  background-color: rgba(0, 0, 0, 0.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.name {
+  font-weight: 600;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.85);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.description {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+  line-height: 1.4;
+}
+
+/* 深色模式 */
+:root.dark-mode .domainCard {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+:root.dark-mode .domainCard.selected {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark-mode .name {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+:root.dark-mode .description {
+  color: rgba(255, 255, 255, 0.45);
+}

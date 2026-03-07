@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Table, Button, Space, Modal, Form, Input, message, Popconfirm, Select, Card } from 'antd'
+import { Table, Button, Space, Modal, Form, Input, message, Popconfirm, Select, Card, Tag } from 'antd'
 import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import { draftApi, tagApi, categoryApi } from '../../utils/api'
+import { getDomainsList, getDomainById } from '../../constants/domains'
 import type { Draft } from '../../types'
 
 export function DraftCenter() {
@@ -18,12 +19,14 @@ export function DraftCenter() {
   const [tags, setTags] = useState<any[]>([])
   const [categories, setCategories] = useState<any[]>([])
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
+  const [selectedDomain, setSelectedDomain] = useState<string | null>(null)
+  const domains = getDomainsList()
 
   useEffect(() => {
     loadDrafts()
     loadTags()
     loadCategories()
-  }, [pagination.current, searchKeyword, selectedTags, selectedCategory])
+  }, [pagination.current, searchKeyword, selectedTags, selectedCategory, selectedDomain])
 
   const loadDrafts = async () => {
     try {
@@ -123,6 +126,21 @@ export function DraftCenter() {
       ellipsis: true,
     },
     {
+      title: '领域',
+      dataIndex: ['metadata', 'domain'],
+      key: 'domain',
+      width: 120,
+      render: (domain?: string) => {
+        if (!domain) return '-'
+        const domainInfo = getDomainById(domain)
+        return domainInfo ? (
+          <Tag color={domainInfo.color}>
+            {domainInfo.icon} {domainInfo.name}
+          </Tag>
+        ) : null
+      },
+    },
+    {
       title: '创建时间',
       dataIndex: 'created_at',
       key: 'created_at',
@@ -167,6 +185,14 @@ export function DraftCenter() {
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
               style={{ width: 250 }}
+            />
+            <Select
+              placeholder="按领域筛选"
+              allowClear
+              style={{ width: 150 }}
+              value={selectedDomain}
+              onChange={setSelectedDomain}
+              options={domains.map((d) => ({ label: `${d.icon} ${d.name}`, value: d.id }))}
             />
             <Select
               placeholder="按分类筛选"

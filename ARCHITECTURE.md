@@ -1,306 +1,423 @@
-# AI Content Creation Engine - 架构设计文档
+# AI Content Engine - 系统架构设计
 
-## 1. 项目概述
-
-这是一个基于 Go + Gin 的 AI 内容创作引擎，支持：
-- **多内容类型**：文章、代码、图片、音频、视频脚本等
-- **多AI提供商**：OpenAI、Ollama、通义千问等
-- **自动化发布**：自动发布到微信公众号、CSDN、掘金等平台
-
-## 2. 系统架构
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        用户界面 (React)                        │
-│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐               │
-│  │ 内容生成器   │ │ 内容编辑器   │ │ 发布管理器   │
-│  │ (Generator) │ │ (Editor)     │ │ (Publisher) │
-│  └──────┬───────┘ └──────┬───────┘ └──────┬───────┘
-│         │               │               │
-│         └───────────────┴───────────────┘
-└─────────┴───────────────┴───────────────┘
-          │               │               │
-          ▼               ▼               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      业务服务层 (Go + Gin)                     │
-│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐               │
-│  │ 内容服务     │ │ AI 服务      │ │ 发布服务     │
-│  │ Content      │ │ AI Service   │ │ Publish      │
-│  └──────┬───────┘ └──────┬───────┘ └──────┬───────┘
-│         │               │               │
-│  ┌──────┴─────────┴──────┐               ▼                       │
-│  │  内容类型处理器       │                     │
-│  │ Text/Code/Img/Audio  │
-│  └──────┬────────────┬───────┘
-│         │            │
-│  ┌──────┴─────┐  │  ┌────┴─────────────────┐
-│  │  提供商适配器 │  │  │   提供商适配器      │
-│  │ OpenAI      │  │  │  Ollama             │
-│  └──────┬───────┘  │  └──────┬─────────┘
-│         │          │         │
-│         └──────────┴─────────┘
-└─────────────────────────────────────────────────────────────────┘
-          │               │
-          ▼               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      数据层                                                   │
-│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐               │
-│  │ 内容存储     │ │ AI 配置     │ │ 发布记录   │
-│  │ Content      │ │ AI Config    │ │ Publish Logs │
-│  └──────────────┘ └──────────────┘ └──────────────┘
-└─────────────────────────────────────────────────────────────────┘
-```
-
-## 3. 模块设计
-
-### 3.1 核心模块
-
-| 模块 | 职责 | 主要组件 |
-|------|------|----------|
-| **内容生成** | 生成各类内容 | TextGenerator, CodeGenerator, ImageGenerator |
-| **AI 适配** | 多AI提供商适配 | OpenAIAdapter, OllamaAdapter |
-| **内容发布** | 发布到平台 | WeChatPublisher, CSDNPublisher |
-| **内容管理** | 内容 CRUD | ContentService |
-| **任务调度** | 定时任务 | Scheduler |
-
-### 3.2 数据模型
-
-```go
-// ContentType 内容类型枚举
-type ContentType string
-
-const (
-    ContentTypeText   ContentType = "text"   // 文本
-    ContentTypeCode   ContentType = "code"   // 代码
-    ContentTypeImage  ContentType = "image"  // 图片
-    ContentTypeAudio  ContentType = "audio"  // 音频
-    ContentTypeVideo  ContentType = "video"  // 视频
-    ContentTypeMixed  ContentType = "mixed"  // 混合
-)
-
-// AIProvider AI 提供商枚举
-type AIProvider string
-
-const (
-    ProviderOpenAI       AIProvider = "openai"
-    ProviderOllama       AIProvider = "ollama"
-    ProviderTongyiQianwen AIProvider = "tongyi_qianwen"
-    ProviderLocal        AIProvider = "local"
-    ProviderCustom       AIProvider = "custom"
-)
-
-// PublishPlatform 平台枚举
-type PublishPlatform string
-
-const (
-    PlatformWeChatOfficialAccount PublishPlatform = "wechat_official_account"
-    PlatformWeChatMoments        PublishPlatform = "wechat_moments"
-    PlatformCSDN                 PublishPlatform = "csdn"
-    PlatformJueJin              PublishPlatform = "juejin"
-    PlatformZhiHu               PublishPlatform = "zhihu"
-    PlatformJianshu             PublishPlatform = "jianshu"
-)
-
-// Content 内容实体
-type Content struct {
-    ID          uint      `gorm:"primaryKey" json:"id"`
-    Title       string    `gorm:"size:255" json:"title"`
-    Content     string    `gorm:"type:text" json:"content"`
-    ContentType ContentType `gorm:"size:20" json:"content_type"`
-    Author      string    `gorm:"size:100" json:"author"`
-    Status      string    `gorm:"size:20" json:"status"`
-    Tags        string    `gorm:"size:500" json:"tags"` // JSON array stored as string
-    Metadata    string    `gorm:"type:text" json:"metadata"` // JSON stored as string
-    CreatedAt   time.Time `json:"created_at"`
-    UpdatedAt   time.Time `json:"updated_at"`
-}
-
-// PublishTask 发布任务实体
-type PublishTask struct {
-    ID          uint           `gorm:"primaryKey" json:"id"`
-    ContentID   uint           `gorm:"index" json:"content_id"`
-    Platform    PublishPlatform `gorm:"size:50" json:"platform"`
-    Status      string         `gorm:"size:20" json:"status"`
-    Settings    string         `gorm:"type:text" json:"settings"` // JSON stored as string
-    CreatedAt   time.Time      `json:"created_at"`
-    PublishedAt *time.Time     `json:"published_at,omitempty"`
-}
-
-// AIConfig AI 配置实体
-type AIConfig struct {
-    ID        uint      `gorm:"primaryKey" json:"id"`
-    Provider  AIProvider `gorm:"size:50" json:"provider"`
-    APIKey    string    `gorm:"size:500" json:"api_key"`
-    Model     string    `gorm:"size:100" json:"model"`
-    BaseURL   string    `gorm:"size:255" json:"base_url"`
-    Settings  string    `gorm:"type:text" json:"settings"` // JSON stored as string
-    CreatedAt time.Time `json:"created_at"`
-    UpdatedAt time.Time `json:"updated_at"`
-    IsDefault bool      `gorm:"default:false" json:"is_default"`
-}
-```
-
-### 3.3 核心接口
-
-```go
-// AIAdapter AI 适配器接口
-type AIAdapter interface {
-    GenerateText(ctx context.Context, prompt string, options GenerateOptions) (string, error)
-    GenerateImage(ctx context.Context, prompt string, options GenerateOptions) ([]byte, error)
-    GenerateAudio(ctx context.Context, prompt string, options GenerateOptions) ([]byte, error)
-    GenerateCode(ctx context.Context, prompt string, options GenerateOptions) (string, error)
-}
-
-// Publisher 发布适配器接口
-type Publisher interface {
-    Publish(ctx context.Context, content *Content, settings map[string]string) (string, error)
-    Draft(ctx context.Context, content *Content, settings map[string]string) (string, error)
-    Delete(ctx context.Context, content *Content) error
-    GetUserInfo(ctx context.Context) (*UserInfo, error)
-}
-
-// ContentHandler 内容处理器接口
-type ContentHandler interface {
-    CanHandle(contentType ContentType) bool
-    Process(ctx context.Context, content Content) (Content, error)
-}
-
-// GenerateOptions 生成选项
-type GenerateOptions struct {
-    Model      string            `json:"model"`
-    MaxTokens  int               `json:"max_tokens"`
-    Temperature float64          `json:"temperature"`
-    TopP       float64           `json:"top_p"`
-    Extra      map[string]string `json:"extra"`
-}
-
-// UserInfo 用户信息
-type UserInfo struct {
-    ID    string `json:"id"`
-    Name  string `json:"name"`
-    Token string `json:"token"`
-}
-```
-
-## 4. 后端 API 设计
-
-### 4.1 内容相关 API
-
-```
-GET    /api/v1/contents              - 获取内容列表
-GET    /api/v1/contents/{id}         - 获取内容详情
-POST   /api/v1/contents              - 创建内容
-PUT    /api/v1/contents/{id}        - 更新内容
-DELETE /api/v1/contents/{id}        - 删除内容
-POST   /api/v1/contents/{id}/clone   - 克隆内容
-GET    /api/v1/contents/{id}/publish - 获取内容发布记录
-```
-
-### 4.2 AI 服务 API
-
-```
-POST   /api/v1/ai/generate          - 生成内容
-POST   /api/v1/ai/config            - AI 配置管理
-GET    /api/v1/ai/config            - 获取 AI 配置
-```
-
-### 4.3 发布服务 API
-
-```
-POST   /api/v1/publish               - 发布内容
-GET    /api/v1/publish/task/{id}     - 获取发布任务状态
-GET    /api/v1/publish/platforms     - 获取支持的平台列表
-```
-
-### 4.4 任务调度 API
-
-```
-GET    /api/v1/scheduler/tasks       - 获取任务列表
-POST   /api/v1/scheduler/tasks       - 创建定时任务
-PUT    /api/v1/scheduler/tasks/{id}  - 更新任务
-DELETE /api/v1/scheduler/tasks/{id}  - 删除任务
-```
-
-## 5. 技术栈
-
-| 层级 | 技术 |
-|------|------|
-| **后端** | Go 1.21+, Gin Web Framework |
-| **数据库** | PostgreSQL / MySQL / SQLite, GORM |
-| **缓存** | Redis |
-| **AI** | OpenAI API, Ollama API, 通义千问 API |
-| **部署** | Docker, Docker Compose |
-| **CI/CD** | GitHub Actions |
-
-## 6. 部署架构
+## 整体架构图
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                              用户                                   │
+│                          用户浏览器 (Frontend)                           │
+│  ┌──────────────────────────────────────────────────────────────────┐   │
+│  │  React 18 + TypeScript + Ant Design                             │   │
+│  │  ┌──────────────────────────────────────────────────────────┐   │   │
+│  │  │  📄 Pages                    🎯 Components               │   │   │
+│  │  ├──────────────────────────────┼──────────────────────────┤   │   │
+│  │  │  • Dashboard                 │ • DomainSelector (领域卡)│   │   │
+│  │  │  • DraftCenter (✨ 领域筛选) │ • DomainParamsForm (参) │   │   │
+│  │  │  • Editor (编辑器)           │ • SquareCard (广场卡)   │   │   │
+│  │  │  • AIStudio (✨ 4步向导)    │ • TipTapEditor          │   │   │
+│  │  │  • PublishManager (发布)     │ • AutoSaveIndicator     │   │   │
+│  │  │  • Analytics (数据分析)      │                         │   │   │
+│  │  │  • Square (✨ 内容广场)      │                         │   │   │
+│  │  │  • Settings (设置)           │                         │   │   │
+│  │  └──────────────────────────────┴──────────────────────────┘   │   │
+│  │                                                                  │   │
+│  │  🌍 Constants (配置数据)          🔗 API Layer                 │   │
+│  │  ├─ domains.ts (9个领域)        ├─ authApi                    │   │
+│  │  └─ domainTemplates.ts (20模板) ├─ draftApi                   │   │
+│  │                                  ├─ contentApi                 │   │
+│  │  📊 State Management              ├─ publisherApi              │   │
+│  │  ├─ React Hooks                   ├─ aiApi                     │   │
+│  │  ├─ localStorage                  ├─ squareApi (✨ 新增)       │   │
+│  │  └─ Zustand (认证/主题)          └─ analyticsApi              │   │
+│  └──────────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────────────┘
-                                      │
-                                      ▼
+                                    ▼
+                    ┌────────────────────────────────────┐
+                    │   HTTP/HTTPS (Bearer Token Auth)   │
+                    │  Content-Type: application/json    │
+                    └────────────────────────────────────┘
+                                    ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                           反向代理 (Nginx)                           │
+│                        后端服务器 (Backend)                             │
+│                      Go + Gin + GORM + MySQL                          │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │  🔐 认证层 (Auth Middleware)                                    │  │
+│  │  └─ JWT Token Validation (Bearer Token)                         │  │
+│  └──────────────────────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │  🎯 Domain Layer (DDD Architecture)                             │  │
+│  │  ├─ Identity Domain                                             │  │
+│  │  │  ├─ login / register / me                                    │  │
+│  │  │  └─ user management                                          │  │
+│  │  │                                                              │  │
+│  │  ├─ Content Domain                                              │  │
+│  │  │  ├─ drafts (CRUD)                                            │  │
+│  │  │  ├─ content (CRUD)                                           │  │
+│  │  │  ├─ versions (历史)                                          │  │
+│  │  │  └─ tags & categories                                        │  │
+│  │  │                                                              │  │
+│  │  ├─ AI Generation Domain                                        │  │
+│  │  │  ├─ generators                                               │  │
+│  │  │  ├─ generate (async task)                                    │  │
+│  │  │  └─ task polling                                             │  │
+│  │  │                                                              │  │
+│  │  ├─ Publishing Domain                                           │  │
+│  │  │  ├─ publishers                                               │  │
+│  │  │  ├─ publish tasks                                            │  │
+│  │  │  └─ analytics                                                │  │
+│  │  │                                                              │  │
+│  │  ├─ Square Domain (✨ 新增)                                    │  │
+│  │  │  ├─ posts (列表、详情、发布)                                │  │
+│  │  │  ├─ likes & collects                                         │  │
+│  │  │  ├─ comments                                                 │  │
+│  │  │  └─ filters & sorting                                        │  │
+│  │  │                                                              │  │
+│  │  ├─ Scheduling Domain                                           │  │
+│  │  │  └─ scheduled tasks                                          │  │
+│  │  │                                                              │  │
+│  │  └─ Configuration Domain                                        │  │
+│  │     └─ system & provider configs                                │  │
+│  └──────────────────────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │  📊 Repository Layer (Data Access)                              │  │
+│  │  ├─ SquarePostRepository (新增)                                │  │
+│  │  ├─ SquareCommentRepository (新增)                             │  │
+│  │  ├─ SquareLikeRepository (新增)                                │  │
+│  │  ├─ SquareCollectRepository (新增)                             │  │
+│  │  └─ [Other repositories...]                                     │  │
+│  └──────────────────────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │  🗄️ Database Layer (GORM ORM)                                  │  │
+│  │  └─ MySQL Connection Pooling                                    │  │
+│  └──────────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────────────┘
-                                      │
-        ┌──────────────────────────────┼──────────────────────────────────────┐
-        │                              │                              │
-        ▼                              ▼                              ▼
-┌───────────────────────┐    ┌───────────────────────┐    ┌───────────────────────┐
-│                       │    │                       │    │                       │
-│                      Docker                         │    │                      Docker                         │
-│                    ┌───────────────┐  │    │                     ┌───────────────┐  │
-│                    │  Web App     │  │    │                     │   DB          │
-│                    │  (Go + Gin) │  │    │                     │  (PostgreSQL) │
-│                    └───────────────┘  │    │                     └───────────────┘  │
-│                                      │    │                                          │
-│                    ┌───────────────┐  │    │                     ┌───────────────┐  │
-│                    │  Redis       │  │    │                     │  Volume      │
-│                    │  (Cache)    │  │    │                     │  (Data)     │
-│                    └───────────────┘  │    │                     └───────────────┘  │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         数据库 (MySQL 8.0)                             │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │  📋 Existing Tables (Previous Implementation)                   │  │
+│  │  ├─ users (身份管理)                                            │  │
+│  │  ├─ drafts (草稿，✨ 新增 domain 字段)                        │  │
+│  │  ├─ content (发布内容)                                          │  │
+│  │  ├─ content_versions (版本历史)                                 │  │
+│  │  ├─ tags & categories (标签和分类)                              │  │
+│  │  ├─ publishers & publish_tasks (发布管理)                       │  │
+│  │  └─ [Other tables...]                                           │  │
+│  │                                                                  │  │
+│  │  ✨ New Tables (Square Implementation)                         │  │
+│  │  ├─ square_posts                                                │  │
+│  │  │  ├─ PK: id                                                   │  │
+│  │  │  ├─ FK: draft_id, user_id                                    │  │
+│  │  │  ├─ Indexes: domain, created_at, likes_count, ...           │  │
+│  │  │  └─ Columns: title, content, preview_text, tags, ...        │  │
+│  │  │                                                              │  │
+│  │  ├─ square_comments                                             │  │
+│  │  │  ├─ PK: id                                                   │  │
+│  │  │  ├─ FK: post_id, user_id                                     │  │
+│  │  │  └─ Indexes: post_id, created_at                             │  │
+│  │  │                                                              │  │
+│  │  ├─ square_likes                                                │  │
+│  │  │  ├─ PK: id                                                   │  │
+│  │  │  ├─ FK: post_id, user_id                                     │  │
+│  │  │  └─ UNIQUE(post_id, user_id) - 防重复点赞                  │  │
+│  │  │                                                              │  │
+│  │  └─ square_collects                                             │  │
+│  │     ├─ PK: id                                                   │  │
+│  │     ├─ FK: post_id, user_id                                     │  │
+│  │     └─ UNIQUE(post_id, user_id) - 防重复收藏                  │  │
+│  └──────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
-## 7. 关键特性
+---
 
-### 7.1 内容生成
-- 多内容类型支持
-- 多AI提供商适配
-- 内容模板管理
-- 内容版本控制
+## 数据流图
 
-### 7.2 自动化发布
-- 多平台发布支持
-- 定时发布
-- 发布队列
-- 发布重试
+### 1. 内容广场浏览流程
 
-### 7.3 内容管理
-- 内容分类管理
-- 标签管理
-- 内容审核
-- 内容统计
+```
+User 访问 /square
+        ↓
+前端加载 Square 页面组件
+        ↓
+调用 squareApi.list(domain, keyword, sort, page)
+        ↓
+发送 POST /api/v1/square/posts (JWT Token)
+        ↓
+后端 ApiListSquarePosts 处理器
+  ├─ 从 JWT 提取 userID
+  ├─ 验证分页参数
+  ├─ 构建查询条件（domain filter, keyword search, sort）
+  ├─ 从 square_posts 表查询
+  ├─ 为每条帖子添加用户点赞/收藏状态
+  └─ 返回 SquarePostDTO 数组
+        ↓
+前端接收数据，渲染 SquareCard 组件网格
+        ↓
+用户交互（滚动、过滤、排序）
+```
 
-## 8. 安全设计
+### 2. 点赞流程
 
-- API 鉴权 (JWT)
-- 数据加密存储
-- SQL 注入防护 (GORM 参数化查询)
-- XSS 防护
-- CSRF 防护
+```
+用户点击心形按钮
+        ↓
+前端调用 squareApi.like(postId)
+        ↓
+发送 POST /api/v1/square/like { post_id: 1 }
+        ↓
+后端 ApiLike 处理器
+  ├─ 从 JWT 提取 userID
+  ├─ 在 square_likes 表插入 (post_id, user_id)
+  │  └─ 如果已存在，返回 "already liked" 错误
+  ├─ square_posts.likes_count += 1
+  └─ 返回 200 OK
+        ↓
+前端：
+  ├─ 更新本地状态 is_liked = true
+  ├─ 更新计数 likes_count += 1
+  └─ 重新渲染卡片
+```
 
-## 9. 扩展性设计
+### 3. 发布草稿到广场流程
 
-- 插件化架构
-- 适配器模式
-- 事件驱动
-- 消息队列 (RabbitMQ / Kafka)
+```
+用户在编辑器完成编辑
+        ↓
+前端在 Editor 组件添加"发布到广场"按钮
+        ↓
+用户点击按钮
+        ↓
+前端调用 squareApi.publish(draftId)
+        ↓
+发送 POST /api/v1/square/publish { draft_id: 123 }
+        ↓
+后端 ApiPublishToSquare 处理器
+  ├─ 从 JWT 提取 userID
+  ├─ 从 content domain 获取草稿
+  │  ├─ 验证草稿归属 (draft.user_id == userID)
+  │  └─ 提取 domain 字段（从 metadata）
+  ├─ 创建 square_posts 记录
+  │  ├─ title: draft.title
+  │  ├─ preview_text: draft.content[:200]
+  │  ├─ domain: draft.metadata["domain"]
+  │  └─ user_id: userID
+  └─ 返回 SquarePostDTO
+        ↓
+前端：
+  ├─ 显示成功提示
+  ├─ 导航到 /square 页面
+  └─ 广场列表显示新帖子
+```
 
-## 10. 未来规划
+---
 
-- 移动端 App
-- 更多 AI 模型支持
-- 更多发布平台支持
-- 数据分析与统计
-- 团队协作
+## API 调用时序图
+
+```
+Frontend                          Backend                      Database
+   │                               │                              │
+   ├─ POST /api/v1/square/posts ─>│                              │
+   │  {domain, keyword, sort}     │                              │
+   │                              ├─ Validate JWT token          │
+   │                              │                              │
+   │                              ├─ Build query ────────────>│
+   │                              │   SELECT * FROM             │
+   │                              │   square_posts WHERE         │
+   │                              │   domain = ?                 │
+   │                              │   AND title LIKE ?           │
+   │                              │   ORDER BY created_at DESC   │
+   │                              │<─────────── Return rows ──┤
+   │                              │                              │
+   │                              ├─ For each post:             │
+   │                              │   Check if liked/collected   │
+   │                              │   ────────────────────>│
+   │                              │   SELECT COUNT(*) FROM       │
+   │                              │   square_likes WHERE         │
+   │                              │   post_id = ? AND user_id= ? │
+   │                              │<─────────────────────┤
+   │                              │                              │
+   │  <─ 200 {posts, total} ──────┤                              │
+   │    [SquarePostDTO[]]         │                              │
+   │                              │                              │
+   ├─ POST /api/v1/square/like ──>│                              │
+   │  {post_id: 1}               │                              │
+   │                              ├─ Insert like ───────────>│
+   │                              │   INSERT INTO               │
+   │                              │   square_likes VALUES        │
+   │                              │   (1, user_id)               │
+   │                              │<────────────────────┤
+   │                              │                              │
+   │                              ├─ Update count ─────────>│
+   │                              │   UPDATE square_posts        │
+   │                              │   SET likes_count = ...+1    │
+   │                              │<────────────────────┤
+   │  <─ 200 {message: "liked"} ──┤                              │
+   │                              │                              │
+```
+
+---
+
+## 9 个领域分类系统架构
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    领域分类系统 (Domains)                       │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  🎬 film-drama (影视与短剧制作)                               │
+│  ├─ Icon: 🎬                                                    │
+│  ├─ SubCategories: [剧本, 分镜, 台词, 场景描述]               │
+│  └─ Templates:                                                 │
+│     ├─ 短剧剧本生成 (base_prompt template)                     │
+│     └─ 精准对话生成 (base_prompt template)                     │
+│                                                                 │
+│  🎭 ai-comics (AI漫剧/动态漫)                                │
+│  ├─ Icon: 🎭                                                    │
+│  ├─ SubCategories: [故事板, 对话气泡, 人物设定]                │
+│  └─ Templates: [漫画故事板生成]                                │
+│                                                                 │
+│  📱 micro-drama (微短剧)                                        │
+│  ├─ Icon: 📱                                                    │
+│  └─ Templates: [竖屏脚本生成]                                  │
+│                                                                 │
+│  🎞️ animation (动画电影/长视频)                               │
+│  └─ Templates: [角色设定生成]                                  │
+│                                                                 │
+│  📣 marketing (营销与电商广告)                                │
+│  └─ Templates: [产品文案生成]                                  │
+│                                                                 │
+│  📚 education (教育与知识出版)                                │
+│  └─ Templates: [课程讲义生成]                                  │
+│                                                                 │
+│  🖼️ interactive (交互式教材与绘本)                            │
+│  └─ Templates: [互动故事生成]                                  │
+│                                                                 │
+│  📰 news-media (新闻媒体与广电)                               │
+│  └─ Templates: [新闻稿生成]                                    │
+│                                                                 │
+│  🎵 music-audio (音乐与音频娱乐)                             │
+│  └─ Templates: [歌词创作]                                      │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    模板系统 (Templates)                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Template = {                                                  │
+│    id: string                  // template id                 │
+│    domainId: string            // 所属领域                     │
+│    name: string                // 模板名称                     │
+│    description: string         // 模板描述                     │
+│    basePrompt: string          // 基础提示词模板（含参数占位）  │
+│    paramFields: [              // 动态参数字段定义              │
+│      {                                                         │
+│        key: "duration"         // 参数键                       │
+│        label: "时长"           // UI 显示标签                  │
+│        type: "slider"          // 字段类型                     │
+│        min: 5,                 // 最小值                       │
+│        max: 60,                // 最大值                       │
+│        defaultValue: 20        // 默认值                       │
+│      },                                                        │
+│      ...                                                       │
+│    ],                                                          │
+│    exampleOutput: string       // 示例输出                     │
+│  }                                                             │
+│                                                                 │
+│  User选择模板 → 填写参数 → buildPromptFromTemplate()          │
+│               → 最终提示词 → 调用AI API生成                   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 文件依赖关系
+
+```
+Frontend Dependencies:
+Square (页面)
+├─ SquareCard (组件)
+├─ squareApi (API调用)
+├─ getDomainById (helper)
+└─ types: SquarePost, SquareComment
+
+AIStudio (页面，改造为向导式)
+├─ DomainSelector (Step 1)
+├─ DomainParamsForm (Step 3)
+├─ getTemplatesByDomain (helper)
+├─ buildPromptFromTemplate (helper)
+└─ squareApi.publish (发布)
+
+DraftCenter (页面，新增领域筛选)
+├─ getDomainsList (helper)
+├─ getDomainById (helper)
+└─ squareApi.list (查询)
+
+Backend Dependencies:
+SquareDomain
+├─ SquareService
+│  ├─ SquarePostRepository
+│  ├─ SquareCommentRepository
+│  ├─ SquareLikeRepository
+│  └─ SquareCollectRepository
+└─ [Other services...]
+
+Database Dependencies:
+square_posts → drafts (FK: draft_id)
+           → users (FK: user_id)
+           
+square_comments → square_posts (FK: post_id)
+               → users (FK: user_id)
+               
+square_likes → square_posts (FK: post_id)
+            → users (FK: user_id)
+            
+square_collects → square_posts (FK: post_id)
+               → users (FK: user_id)
+               
+drafts → ✨ NEW: domain field
+```
+
+---
+
+## 部署架构
+
+```
+┌──────────────────────────────────────┐
+│    开发环境                          │
+├──────────────────────────────────────┤
+│ npm run dev  →  localhost:5173       │
+│ go run main.go  →  localhost:8888    │
+│ MySQL  →  localhost:3306             │
+└──────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────┐
+│                   生产环境                                │
+├──────────────────────────────────────────────────────────┤
+│  Front End                                              │
+│  ├─ Vite Build (dist/)                                 │
+│  ├─ CDN / Web Server                                    │
+│  └─ HTTPS + 缓存策略                                     │
+│                                                         │
+│  Backend                                                │
+│  ├─ Docker Container                                    │
+│  ├─ Kubernetes / VPS                                    │
+│  └─ 负载均衡 + 自动伸缩                                   │
+│                                                         │
+│  Database                                               │
+│  ├─ MySQL Cluster (主从/分片)                           │
+│  ├─ Redis Cache (点赞/收藏关系)                          │
+│  └─ 定期备份                                             │
+│                                                         │
+│  Monitoring                                             │
+│  ├─ Prometheus + Grafana                               │
+│  ├─ 应用日志 (ELK Stack)                                 │
+│  └─ 告警系统                                             │
+└──────────────────────────────────────────────────────────┘
+```
+
+---
+
+**✅ 架构设计完成**
+

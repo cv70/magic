@@ -15,6 +15,7 @@ const PublishManager = lazy(() => import('./pages/PublishManager').then(m => ({ 
 const Analytics = lazy(() => import('./pages/Analytics').then(m => ({ default: m.Analytics })))
 const AIStudio = lazy(() => import('./pages/AIStudio').then(m => ({ default: m.AIStudio })))
 const Settings = lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })))
+const Square = lazy(() => import('./pages/Square').then(m => ({ default: m.Square })))
 
 // 加载中组件
 const LoadingSpinner = () => (
@@ -106,6 +107,14 @@ function App() {
           element={
             <Suspense fallback={<LoadingSpinner />}>
               <Settings />
+            </Suspense>
+          }
+        />
+        <Route
+          path="square"
+          element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <Square />
             </Suspense>
           }
         />

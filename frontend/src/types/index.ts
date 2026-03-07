@@ -191,3 +191,67 @@ export interface PlatformComparison {
   avg_likes: number
   success_rate: string
 }
+
+// 领域分类相关类型
+export interface DomainInfo {
+  id: string
+  name: string
+  icon: string
+  description: string
+  color: string
+  subcategories: string[]
+  examplePrompts: string[]
+}
+
+// 内容广场相关类型
+export interface SquarePost {
+  id: number
+  draft_id?: number
+  user_id: number
+  user?: {
+    id: number
+    username: string
+    avatar?: string
+  }
+  title: string
+  preview_text: string
+  domain: string
+  tags: string[]
+  cover_image?: string
+  likes_count: number
+  comments_count: number
+  collects_count: number
+  is_liked?: boolean
+  is_collected?: boolean
+  created_at: string
+  updated_at?: string
+}
+
+export interface SquareComment {
+  id: number
+  post_id: number
+  user_id: number
+  user?: {
+    id: number
+    username: string
+    avatar?: string
+  }
+  content: string
+  created_at: string
+  updated_at?: string
+}
+
+export interface SquareListParams {
+  domain?: string
+  keyword?: string
+  sort?: 'newest' | 'hottest' | 'trending'
+  page: number
+  page_size: number
+}
+
+// AI 生成相关扩展
+export interface AIGenerateParams {
+  domain: string
+  template_id: string
+  params: Record<string, any>
+}
