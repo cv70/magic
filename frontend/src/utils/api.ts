@@ -149,6 +149,23 @@ export const contentApi = {
   delete: (id: number) => request<{ success: boolean }>('POST', '/content/delete', { id }),
 }
 
+// ===================== Publisher API =====================
+
+export const publisherApi = {
+  // 获取发布者列表
+  search: (filters?: any) =>
+    request<{ data: any[]; total: number }>('POST', '/publish/publisher/search', filters || {}),
+
+  // 获取单个发布者
+  get: (id: number) => request<any>('POST', '/publish/publisher/get', { id }),
+
+  // 创建发布者
+  add: (data: any) => request<any>('POST', '/publish/publisher/add', data),
+
+  // 更新发布者
+  update: (id: number, data: any) => request<any>('POST', '/publish/publisher/update', { id, ...data }),
+}
+
 // ===================== PublishTask API =====================
 
 export const publishApi = {
@@ -246,6 +263,29 @@ export const categoryApi = {
   // 修改分类顺序
   updateOrder: (id: number, order: number) =>
     request<Category>('POST', `/categories/${id}/order`, { order }),
+}
+
+// ===================== AI Generation API =====================
+
+export const aiApi = {
+  // 生成内容
+  generate: (data: { generatorID: number; input: string; title?: string }) =>
+    request<{ id: number }>('POST', '/ai/generate', data),
+
+  // 获取生成任务状态
+  getTask: (id: number) =>
+    request<{
+      id: number
+      status: string
+      content?: string
+      error?: string
+      createdAt: string
+      completedAt?: string
+    }>('POST', '/ai/task/get', { id }),
+
+  // 列出生成器
+  listGenerators: () =>
+    request<{ data: any[] }>('POST', '/ai/generator/search', {}),
 }
 
 // ===================== PromptTemplate API =====================

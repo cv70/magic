@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Form, Input, Button, Space, message, Spin, Select, Card } from 'antd'
 import { SaveOutlined, SendOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 import { draftApi } from '../../utils/api'
+import { publisherApi } from '../../utils/api'
 import { TipTapEditor } from '../../components/TipTapEditor'
 import { AutoSaveIndicator } from '../../components/AutoSaveIndicator'
 import { useAutoSave } from '../../hooks/useAutoSave'
@@ -57,15 +58,12 @@ export function Editor() {
 
   const loadPublishers = async () => {
     try {
-      // TODO: Load publishers from API
-      // For now, use mock data
-      setPublishers([
-        { id: '1', platform: 'WeChat' },
-        { id: '2', platform: 'Weibo' },
-        { id: '3', platform: 'Douyin' },
-      ])
+      const result = await publisherApi.search()
+      setPublishers(result.data || [])
     } catch (error) {
       console.error('加载发布平台失败')
+      // Fallback to empty array on error
+      setPublishers([])
     }
   }
 
@@ -190,7 +188,7 @@ export function Editor() {
                     onChange={setSelectedPublishers}
                     options={publishers.map((p) => ({
                       value: p.id,
-                      label: p.platform,
+                      label: p.name || p.platform,
                     }))}
                   />
                   <Button

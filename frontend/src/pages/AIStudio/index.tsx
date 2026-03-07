@@ -1,40 +1,75 @@
 import { useEffect, useState } from 'react'
 import { Card, Form, Input, Button, Select, Space, message, Spin, Row, Col, Modal, Table } from 'antd'
 import { SendOutlined, SaveOutlined } from '@ant-design/icons'
+import { aiApi, promptApi, draftApi } from '../../utils/api'
 
 export function AIStudio() {
   const [form] = Form.useForm()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
   const [generatedContent, setGeneratedContent] = useState('')
   const [selectedGenerator, setSelectedGenerator] = useState('')
   const [selectedPrompt, setSelectedPrompt] = useState('')
   const [generationHistory, setGenerationHistory] = useState<any[]>([])
   const [showHistoryModal, setShowHistoryModal] = useState(false)
-
-  // Mock data for AI generators
-  const generators = [
-    { id: 'gpt4', name: 'GPT-4', description: '最强大的AI模型' },
-    { id: 'gpt35', name: 'GPT-3.5', description: '快速高效的AI模型' },
-    { id: 'claude', name: 'Claude', description: '优秀的文本生成模型' },
-  ]
-
-  // Mock data for prompt templates
-  const promptTemplates = [
-    { id: 1, name: '博客文章', category: '内容创作', description: '生成SEO友好的博客文章' },
-    { id: 2, name: '社交媒体', category: '内容创作', description: '生成吸引人的社交媒体帖子' },
-    { id: 3, name: '产品描述', category: '电商', description: '生成详细的产品描述' },
-    { id: 4, name: '新闻稿', category: '新闻', description: '生成专业的新闻稿' },
-    { id: 5, name: '电子邮件', category: '营销', description: '生成营销邮件内容' },
-  ]
+  const [generators, setGenerators] = useState<any[]>([])
+  const [promptTemplates, setPromptTemplates] = useState<any[]>([])
 
   useEffect(() => {
+    loadGenerators()
+    loadPromptTemplates()
     // Load generation history from localStorage
     const history = localStorage.getItem('ai_generation_history')
     if (history) {
       setGenerationHistory(JSON.parse(history))
     }
   }, [])
+
+  const loadGenerators = async () => {
+    try {
+      const result = await aiApi.listGenerators()
+      setGenerators(result.data || [])
+    } catch (error) {
+      console.error('加载生成器失败')
+      setGenerators([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loadPromptTemplates = async () => {
+    try {
+      const result = await promptApi.list()
+      setPromptTemplates(result.data || [])
+    } catch (error) {
+      console.error('加载提示词模板失败')
+    }
+  }
+
+  const pollGenerationStatus = async (taskId: number, maxAttempts = 120): Promise<string> => {
+    let attempts = 0
+    while (attempts < maxAttempts) {
+      try {
+        const task = await aiApi.getTask(taskId)
+        if (task.status === 'completed' || task.status === 'success') {
+          return task.content || ''
+        }
+        if (task.status === 'failed' || task.status === 'error') {
+          throw new Error(task.error || '生成失败')
+        }
+        // 待处理，等待后重试
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+        attempts++
+      } catch (error) {
+        if (attempts >= maxAttempts - 1) {
+          throw error
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+        attempts++
+      }
+    }
+    throw new Error('生成超时')
+  }
 
   const handleGenerate = async (values: any) => {
     if (!selectedGenerator) {
@@ -48,14 +83,16 @@ export function AIStudio() {
 
     setGenerating(true)
     try {
-      // Simulate AI generation API call
-      // In production, this would call: POST /api/v1/ai/generate
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      // 调用 AI 生成 API
+      const response = await aiApi.generate({
+        generatorID: parseInt(selectedGenerator),
+        input: values.prompt || '请生成高质量的内容',
+        title: values.title,
+      })
 
-      // Mock generated content
-      const mockContent = `# ${values.title || '生成的内容标题'}\n\n这是由AI生成的内容示例。实际内容会根据您的提示和选择的生成器而不同。\n\n## 主要特点\n\n- 内容根据您的需求自动生成\n- 支持多种生成器选择\n- 快速高效的生成速度\n\n${values.prompt || '您可以在此添加额外的提示词来定制生成的内容。'}`
-
-      setGeneratedContent(mockContent)
+      // 轮询获取生成结果
+      const content = await pollGenerationStatus(response.id)
+      setGeneratedContent(content)
 
       // Save to history
       const newItem = {
@@ -64,7 +101,7 @@ export function AIStudio() {
         generator: selectedGenerator,
         template: selectedPrompt,
         prompt: values.prompt,
-        content: mockContent,
+        content,
         createdAt: new Date().toISOString(),
       }
 
@@ -74,7 +111,8 @@ export function AIStudio() {
 
       message.success('内容已生成！')
     } catch (error) {
-      message.error('生成失败，请重试')
+      console.error('生成失败:', error)
+      message.error(error instanceof Error ? error.message : '生成失败，请重试')
     } finally {
       setGenerating(false)
     }
@@ -90,8 +128,12 @@ export function AIStudio() {
       setLoading(true)
       const title = form.getFieldValue('title') || '生成的内容'
 
-      // Save as draft via API: POST /api/v1/drafts/create
-      // For now, just show success message
+      // Save as draft via API
+      await draftApi.create({
+        title,
+        content: generatedContent,
+        content_type: 'html',
+      })
       message.success(`已保存为草稿：${title}`)
 
       // Clear form

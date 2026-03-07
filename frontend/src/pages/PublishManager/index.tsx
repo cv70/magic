@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Table, Button, Space, Modal, Form, Select, message, Tag, Spin } from 'antd'
 import { ReloadOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons'
-import { publishApi, contentApi } from '../../utils/api'
+import { publishApi, contentApi, publisherApi } from '../../utils/api'
 
 const statusColorMap: { [key: string]: string } = {
   pending: 'orange',
@@ -40,15 +40,11 @@ export function PublishManager() {
 
   const loadPublishers = async () => {
     try {
-      // TODO: Load publishers from API
-      // For now, use mock data
-      setPublishers([
-        { id: '1', platform: 'WeChat' },
-        { id: '2', platform: 'Weibo' },
-        { id: '3', platform: 'Douyin' },
-      ])
+      const result = await publisherApi.search()
+      setPublishers(result.data || [])
     } catch (error) {
       console.error('加载发布平台失败')
+      setPublishers([])
     }
   }
 
@@ -226,7 +222,7 @@ export function PublishManager() {
             <Select placeholder="选择发布平台">
               {publishers.map((p) => (
                 <Select.Option key={p.id} value={p.id}>
-                  {p.platform}
+                  {p.name || p.platform}
                 </Select.Option>
               ))}
             </Select>
