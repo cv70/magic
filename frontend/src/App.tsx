@@ -9,6 +9,7 @@ import { DraftCenter } from './pages/DraftCenter'
 import { Editor } from './pages/Editor'
 import { PublishManager } from './pages/PublishManager'
 import { Analytics } from './pages/Analytics'
+import { AIStudio } from './pages/AIStudio'
 import { useAuthStore } from './stores/authStore'
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
         <Route path="drafts/new" element={<Editor />} />
         <Route path="analytics" element={<Analytics />} />
         <Route path="publish" element={<PublishManager />} />
+        <Route path="ai-studio" element={<AIStudio />} />
       </Route>
 
       {/* 默认重定向 */}
