@@ -4,6 +4,8 @@ import { Form, Input, Button, Space, message, Spin, Select, Card } from 'antd'
 import { SaveOutlined, SendOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 import { draftApi } from '../../utils/api'
 import { TipTapEditor } from '../../components/TipTapEditor'
+import { AutoSaveIndicator } from '../../components/AutoSaveIndicator'
+import { useAutoSave } from '../../hooks/useAutoSave'
 
 export function Editor() {
   const { id } = useParams()
@@ -15,6 +17,20 @@ export function Editor() {
   const [selectedPublishers, setSelectedPublishers] = useState<number[]>([])
   const [isPublishing, setIsPublishing] = useState(false)
   const [content, setContent] = useState('')
+
+  // 自动保存
+  const { status: autoSaveStatus, updateData, manualSave } = useAutoSave({
+    interval: 30000, // 30秒
+    onSave: async (data) => {
+      if (id && form.getFieldValue('title')) {
+        await draftApi.update(parseInt(id), {
+          title: form.getFieldValue('title'),
+          content_type: form.getFieldValue('content_type'),
+          content: data.content,
+        })
+      }
+    },
+  })
 
   useEffect(() => {
     if (id) {
@@ -128,10 +144,19 @@ export function Editor() {
 
           <Form.Item label="内容编辑器">
             <Card style={{ marginBottom: 16 }}>
+              <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '12px', color: '#666' }}>
+                  自动保存每 30 秒
+                </span>
+                <AutoSaveIndicator {...autoSaveStatus} />
+              </div>
               <TipTapEditor
                 value={content}
-                onChange={setContent}
-                placeholder="开始输入内容...支持富文本、Markdown 和源码编辑"
+                onChange={(newContent) => {
+                  setContent(newContent)
+                  updateData({ content: newContent })
+                }}
+                placeholder="开始输入内容...支持富文本、Markdown 和源码编辑（自动保存）"
                 height="500px"
               />
             </Card>
@@ -147,6 +172,12 @@ export function Editor() {
               >
                 保存草稿
               </Button>
+
+              {id && (
+                <Button onClick={manualSave} loading={autoSaveStatus.isSaving}>
+                  立即保存
+                </Button>
+              )}
 
               <div style={{ borderLeft: '1px solid #ddd', paddingLeft: 16, paddingRight: 16 }}>
                 <div style={{ marginBottom: 8 }}>发布到平台：</div>
