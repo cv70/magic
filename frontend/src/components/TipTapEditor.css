@@ -1,0 +1,179 @@
+/* TipTap 编辑器样式 */
+
+.tiptap-editor-wrapper {
+  width: 100%;
+}
+
+.tiptap-toolbar {
+  padding: 12px;
+  background: #fafafa;
+  border: 1px solid #d9d9d9;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.tiptap-content {
+  border: 1px solid #d9d9d9;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  background: white;
+  overflow-y: auto;
+}
+
+/* TipTap 编辑器内容样式 */
+.ProseMirror {
+  padding: 12px;
+  outline: none;
+  min-height: 300px;
+}
+
+/* 段落 */
+.ProseMirror p {
+  margin: 0.5em 0;
+  line-height: 1.8;
+}
+
+/* 标题 */
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3,
+.ProseMirror h4,
+.ProseMirror h5,
+.ProseMirror h6 {
+  line-height: 1.2;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+}
+
+.ProseMirror h1 {
+  font-size: 2em;
+}
+
+.ProseMirror h2 {
+  font-size: 1.6em;
+}
+
+.ProseMirror h3 {
+  font-size: 1.3em;
+}
+
+/* 列表 */
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 2em;
+  margin: 0.5em 0;
+}
+
+.ProseMirror li {
+  margin: 0.25em 0;
+}
+
+/* 代码块 */
+.ProseMirror pre {
+  background: #f5f5f5;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 12px;
+  overflow-x: auto;
+  margin: 0.5em 0;
+}
+
+.ProseMirror code {
+  background: #f5f5f5;
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-size: 0.9em;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.ProseMirror pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.9em;
+}
+
+/* 块引用 */
+.ProseMirror blockquote {
+  border-left: 4px solid #1890ff;
+  margin: 0.5em 0;
+  padding-left: 12px;
+  color: #666;
+  font-style: italic;
+}
+
+/* 水平线 */
+.ProseMirror hr {
+  border: none;
+  border-top: 1px solid #d9d9d9;
+  margin: 1em 0;
+}
+
+/* 链接 */
+.ProseMirror a {
+  color: #1890ff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.ProseMirror a:hover {
+  text-decoration: underline;
+}
+
+/* 粗体、斜体等 */
+.ProseMirror strong,
+.ProseMirror em,
+.ProseMirror s {
+  /* 保持默认样式 */
+}
+
+/* 占位符 */
+.ProseMirror.is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #adb5bd;
+  pointer-events: none;
+  height: 0;
+}
+
+/* 焦点状态 */
+.tiptap-content .ProseMirror:focus {
+  outline: 1px solid #1890ff;
+  outline-offset: -1px;
+}
+
+/* 表格（如果添加了表格扩展）*/
+.ProseMirror table {
+  border-collapse: collapse;
+  margin: 0.5em 0;
+  width: 100%;
+}
+
+.ProseMirror table th,
+.ProseMirror table td {
+  border: 1px solid #d9d9d9;
+  padding: 8px;
+  text-align: left;
+}
+
+.ProseMirror table th {
+  background: #fafafa;
+  font-weight: 600;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .tiptap-toolbar {
+    padding: 8px;
+    gap: 4px;
+  }
+
+  .ProseMirror {
+    padding: 8px;
+    font-size: 14px;
+  }
+}

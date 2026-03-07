@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Form, Input, Button, Space, message, Spin, Select } from 'antd'
+import { Form, Input, Button, Space, message, Spin, Select, Card } from 'antd'
 import { SaveOutlined, SendOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 import { draftApi } from '../../utils/api'
+import { TipTapEditor } from '../../components/TipTapEditor'
 
 export function Editor() {
   const { id } = useParams()
@@ -13,6 +14,7 @@ export function Editor() {
   const [publishers, setPublishers] = useState<any[]>([])
   const [selectedPublishers, setSelectedPublishers] = useState<number[]>([])
   const [isPublishing, setIsPublishing] = useState(false)
+  const [content, setContent] = useState('')
 
   useEffect(() => {
     if (id) {
@@ -26,9 +28,9 @@ export function Editor() {
       const draft = await draftApi.get(parseInt(id!))
       form.setFieldsValue({
         title: draft.title,
-        content: draft.content,
         content_type: draft.content_type,
       })
+      setContent(draft.content)
     } catch (error) {
       message.error('加载草稿失败')
       navigate('/drafts')
@@ -54,11 +56,15 @@ export function Editor() {
   const handleSave = async (values: any) => {
     setSaving(true)
     try {
+      const data = {
+        ...values,
+        content,
+      }
       if (id) {
-        await draftApi.update(parseInt(id), values)
+        await draftApi.update(parseInt(id), data)
         message.success('草稿已保存')
       } else {
-        const result = await draftApi.create(values)
+        const result = await draftApi.create(data)
         navigate(`/drafts/${result.id}/edit`)
         message.success('草稿已创建')
       }
@@ -111,28 +117,28 @@ export function Editor() {
           <Form.Item
             name="content_type"
             label="内容类型"
-            initialValue="text"
+            initialValue="html"
           >
             <Select>
-              <Select.Option value="text">文本</Select.Option>
+              <Select.Option value="text">纯文本</Select.Option>
               <Select.Option value="markdown">Markdown</Select.Option>
-              <Select.Option value="html">HTML</Select.Option>
+              <Select.Option value="html">富文本 (HTML)</Select.Option>
             </Select>
           </Form.Item>
 
-          <Form.Item
-            name="content"
-            label="内容"
-            rules={[{ required: true, message: '请输入内容' }]}
-          >
-            <Input.TextArea
-              rows={15}
-              placeholder="输入文章内容（当前版本使用纯文本编辑器，后续会升级为富文本编辑器）"
-            />
+          <Form.Item label="内容编辑器">
+            <Card style={{ marginBottom: 16 }}>
+              <TipTapEditor
+                value={content}
+                onChange={setContent}
+                placeholder="开始输入内容...支持富文本、Markdown 和源码编辑"
+                height="500px"
+              />
+            </Card>
           </Form.Item>
 
           <Form.Item>
-            <Space>
+            <Space wrap>
               <Button
                 type="primary"
                 icon={<SaveOutlined />}
@@ -142,29 +148,30 @@ export function Editor() {
                 保存草稿
               </Button>
 
-              <div style={{ borderLeft: '1px solid #ddd', paddingLeft: 16 }}>
-                <div style={{ marginBottom: 8 }}>选择发布平台：</div>
-                <Select
-                  mode="multiple"
-                  placeholder="选择要发布的平台"
-                  style={{ width: 300 }}
-                  value={selectedPublishers}
-                  onChange={setSelectedPublishers}
-                  options={publishers.map((p) => ({
-                    value: p.id,
-                    label: p.platform,
-                  }))}
-                />
-                <Button
-                  type="primary"
-                  danger
-                  icon={<SendOutlined />}
-                  loading={isPublishing}
-                  onClick={handlePublish}
-                  style={{ marginTop: 8 }}
-                >
-                  发布到平台
-                </Button>
+              <div style={{ borderLeft: '1px solid #ddd', paddingLeft: 16, paddingRight: 16 }}>
+                <div style={{ marginBottom: 8 }}>发布到平台：</div>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <Select
+                    mode="multiple"
+                    placeholder="选择要发布的平台"
+                    style={{ width: 300, minWidth: 200 }}
+                    value={selectedPublishers}
+                    onChange={setSelectedPublishers}
+                    options={publishers.map((p) => ({
+                      value: p.id,
+                      label: p.platform,
+                    }))}
+                  />
+                  <Button
+                    type="primary"
+                    danger
+                    icon={<SendOutlined />}
+                    loading={isPublishing}
+                    onClick={handlePublish}
+                  >
+                    发布
+                  </Button>
+                </div>
               </div>
             </Space>
           </Form.Item>
