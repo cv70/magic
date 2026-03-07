@@ -6,19 +6,13 @@ import { LoginPage } from './pages/Login'
 import { RegisterPage } from './pages/Register'
 import { Dashboard } from './pages/Dashboard'
 import { DraftCenter } from './pages/DraftCenter'
+import { Editor } from './pages/Editor'
+import { PublishManager } from './pages/PublishManager'
 import { useAuthStore } from './stores/authStore'
 
 // 临时占位符页面
-function EditorPlaceholder() {
-  return <div style={{ padding: 24 }}>编辑器页面 - 开发中</div>
-}
-
 function AnalyticsPlaceholder() {
   return <div style={{ padding: 24 }}>分析页面 - 开发中</div>
-}
-
-function PublishPlaceholder() {
-  return <div style={{ padding: 24 }}>发布管理页面 - 开发中</div>
 }
 
 function App() {
@@ -45,10 +39,10 @@ function App() {
       >
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="drafts" element={<DraftCenter />} />
-        <Route path="drafts/:id/edit" element={<EditorPlaceholder />} />
-        <Route path="drafts/new" element={<EditorPlaceholder />} />
+        <Route path="drafts/:id/edit" element={<Editor />} />
+        <Route path="drafts/new" element={<Editor />} />
         <Route path="analytics" element={<AnalyticsPlaceholder />} />
-        <Route path="publish" element={<PublishPlaceholder />} />
+        <Route path="publish" element={<PublishManager />} />
       </Route>
 
       {/* 默认重定向 */}
