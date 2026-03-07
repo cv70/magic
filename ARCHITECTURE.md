@@ -2,7 +2,7 @@
 
 ## 1. 项目概述
 
-这是一个基于 Rust + React 的 AI 内容创作引擎，支持：
+这是一个基于 Go + Gin 的 AI 内容创作引擎，支持：
 - **多内容类型**：文章、代码、图片、音频、视频脚本等
 - **多AI提供商**：OpenAI、Ollama、通义千问等
 - **自动化发布**：自动发布到微信公众号、CSDN、掘金等平台
@@ -14,7 +14,7 @@
 │                        用户界面 (React)                        │
 │  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐               │
 │  │ 内容生成器   │ │ 内容编辑器   │ │ 发布管理器   │
-│  │ (Generator) │ │ (Editor) │ │ (Publisher) │
+│  │ (Generator) │ │ (Editor)     │ │ (Publisher) │
 │  └──────┬───────┘ └──────┬───────┘ └──────┬───────┘
 │         │               │               │
 │         └───────────────┴───────────────┘
@@ -22,7 +22,7 @@
           │               │               │
           ▼               ▼               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                      业务服务层 (Rust)                         │
+│                      业务服务层 (Go + Gin)                     │
 │  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐               │
 │  │ 内容服务     │ │ AI 服务      │ │ 发布服务     │
 │  │ Content      │ │ AI Service   │ │ Publish      │
@@ -35,7 +35,7 @@
 │         │            │
 │  ┌──────┴─────┐  │  ┌────┴─────────────────┐
 │  │  提供商适配器 │  │  │   提供商适配器      │
-│  │ OpenAI      │  │  │  Ollama       │
+│  │ OpenAI      │  │  │  Ollama             │
 │  └──────┬───────┘  │  └──────┬─────────┘
 │         │          │         │
 │         └──────────┴─────────┘
@@ -65,99 +65,120 @@
 
 ### 3.2 数据模型
 
-```rust
-// 内容类型枚举
-enum ContentType {
-    Text,          // 文本
-    Code,          // 代码
-    Image,         // 图片
-    Audio,         // 音频
-    Video,         // 视频
-    Mixed,         // 混合
+```go
+// ContentType 内容类型枚举
+type ContentType string
+
+const (
+    ContentTypeText   ContentType = "text"   // 文本
+    ContentTypeCode   ContentType = "code"   // 代码
+    ContentTypeImage  ContentType = "image"  // 图片
+    ContentTypeAudio  ContentType = "audio"  // 音频
+    ContentTypeVideo  ContentType = "video"  // 视频
+    ContentTypeMixed  ContentType = "mixed"  // 混合
+)
+
+// AIProvider AI 提供商枚举
+type AIProvider string
+
+const (
+    ProviderOpenAI       AIProvider = "openai"
+    ProviderOllama       AIProvider = "ollama"
+    ProviderTongyiQianwen AIProvider = "tongyi_qianwen"
+    ProviderLocal        AIProvider = "local"
+    ProviderCustom       AIProvider = "custom"
+)
+
+// PublishPlatform 平台枚举
+type PublishPlatform string
+
+const (
+    PlatformWeChatOfficialAccount PublishPlatform = "wechat_official_account"
+    PlatformWeChatMoments        PublishPlatform = "wechat_moments"
+    PlatformCSDN                 PublishPlatform = "csdn"
+    PlatformJueJin              PublishPlatform = "juejin"
+    PlatformZhiHu               PublishPlatform = "zhihu"
+    PlatformJianshu             PublishPlatform = "jianshu"
+)
+
+// Content 内容实体
+type Content struct {
+    ID          uint      `gorm:"primaryKey" json:"id"`
+    Title       string    `gorm:"size:255" json:"title"`
+    Content     string    `gorm:"type:text" json:"content"`
+    ContentType ContentType `gorm:"size:20" json:"content_type"`
+    Author      string    `gorm:"size:100" json:"author"`
+    Status      string    `gorm:"size:20" json:"status"`
+    Tags        string    `gorm:"size:500" json:"tags"` // JSON array stored as string
+    Metadata    string    `gorm:"type:text" json:"metadata"` // JSON stored as string
+    CreatedAt   time.Time `json:"created_at"`
+    UpdatedAt   time.Time `json:"updated_at"`
 }
 
-// AI 提供商枚举
-enum AIProvider {
-    OpenAI,
-    Ollama,
-    TongyiQianwen,
-    Local,
-    Custom(String),
+// PublishTask 发布任务实体
+type PublishTask struct {
+    ID          uint           `gorm:"primaryKey" json:"id"`
+    ContentID   uint           `gorm:"index" json:"content_id"`
+    Platform    PublishPlatform `gorm:"size:50" json:"platform"`
+    Status      string         `gorm:"size:20" json:"status"`
+    Settings    string         `gorm:"type:text" json:"settings"` // JSON stored as string
+    CreatedAt   time.Time      `json:"created_at"`
+    PublishedAt *time.Time     `json:"published_at,omitempty"`
 }
 
-// 平台枚举
-enum PublishPlatform {
-    WeChatOfficialAccount,
-    WeChatMoments,
-    CSDN,
-    JueJin,
-    ZhiHu,
-    Jianshu,
-    Custom(String),
-}
-
-// 内容实体
-struct Content {
-    id: Uuid,
-    title: String,
-    content: String,
-    content_type: ContentType,
-    author: String,
-    status: ContentStatus,
-    tags: Vec<String>,
-    metadata: HashMap<String, String>,
-    created_at: DateTime<Utc>,
-    updated_at: DateTime<Utc>,
-}
-
-// 发布任务实体
-struct PublishTask {
-    id: Uuid,
-    content_id: Uuid,
-    platform: PublishPlatform,
-    status: PublishStatus,
-    settings: HashMap<String, String>,
-    created_at: DateTime<Utc>,
-    published_at: Option<DateTime<Utc>>,
-}
-
-// AI 配置实体
-struct AIConfig {
-    id: Uuid,
-    provider: AIProvider,
-    api_key: String,
-    model: String,
-    base_url: String,
-    settings: HashMap<String, String>,
-    created_at: DateTime<Utc>,
-    updated_at: DateTime<Utc>,
-    is_default: bool,
+// AIConfig AI 配置实体
+type AIConfig struct {
+    ID        uint      `gorm:"primaryKey" json:"id"`
+    Provider  AIProvider `gorm:"size:50" json:"provider"`
+    APIKey    string    `gorm:"size:500" json:"api_key"`
+    Model     string    `gorm:"size:100" json:"model"`
+    BaseURL   string    `gorm:"size:255" json:"base_url"`
+    Settings  string    `gorm:"type:text" json:"settings"` // JSON stored as string
+    CreatedAt time.Time `json:"created_at"`
+    UpdatedAt time.Time `json:"updated_at"`
+    IsDefault bool      `gorm:"default:false" json:"is_default"`
 }
 ```
 
 ### 3.3 核心接口
 
-```rust
-// AI 适配器接口
-trait AIAdapter: Send + Sync {
-    async fn generate_text(&self, prompt: &str, options: GenerateOptions) -> Result<String>;
-    async fn generate_image(&self, prompt: &str, options: GenerateOptions) -> Result<Vec<u8>>;
-    async fn generate_audio(&self, prompt: &str, options: GenerateOptions) -> Result<Vec<u8>>;
-    async fn generate_code(&self, prompt: &str, options: GenerateOptions) -> Result<String>;
+```go
+// AIAdapter AI 适配器接口
+type AIAdapter interface {
+    GenerateText(ctx context.Context, prompt string, options GenerateOptions) (string, error)
+    GenerateImage(ctx context.Context, prompt string, options GenerateOptions) ([]byte, error)
+    GenerateAudio(ctx context.Context, prompt string, options GenerateOptions) ([]byte, error)
+    GenerateCode(ctx context.Context, prompt string, options GenerateOptions) (string, error)
 }
 
-// 发布适配器接口
-trait Publisher: Send + Sync {
-    async fn publish(&self, content: &Content, settings: &HashMap<String, String>) -> Result<String>;
-    async fn draft(&self, content: &Content, settings: &HashMap<String, String>) -> Result<String>;
-    async fn delete(&self, content: &Content) -> Result<()>;
-    async fn get_user_info(&self) -> Result<UserInfo>;
+// Publisher 发布适配器接口
+type Publisher interface {
+    Publish(ctx context.Context, content *Content, settings map[string]string) (string, error)
+    Draft(ctx context.Context, content *Content, settings map[string]string) (string, error)
+    Delete(ctx context.Context, content *Content) error
+    GetUserInfo(ctx context.Context) (*UserInfo, error)
 }
 
-// 内容处理器接口
-trait ContentHandler: Send + Sync {
-    fn can_handle(&self, content_type: &ContentType) -> bool;
-    async fn process(&self, content: Content) -> Result<Content>;
+// ContentHandler 内容处理器接口
+type ContentHandler interface {
+    CanHandle(contentType ContentType) bool
+    Process(ctx context.Context, content Content) (Content, error)
+}
+
+// GenerateOptions 生成选项
+type GenerateOptions struct {
+    Model      string            `json:"model"`
+    MaxTokens  int               `json:"max_tokens"`
+    Temperature float64          `json:"temperature"`
+    TopP       float64           `json:"top_p"`
+    Extra      map[string]string `json:"extra"`
+}
+
+// UserInfo 用户信息
+type UserInfo struct {
+    ID    string `json:"id"`
+    Name  string `json:"name"`
+    Token string `json:"token"`
 }
 ```
 
@@ -167,10 +188,10 @@ trait ContentHandler: Send + Sync {
 
 ```
 GET    /api/v1/contents              - 获取内容列表
-GET    /api/v1/contents/{id}          - 获取内容详情
+GET    /api/v1/contents/{id}         - 获取内容详情
 POST   /api/v1/contents              - 创建内容
-PUT    /api/v1/contents/{id}          - 更新内容
-DELETE /api/v1/contents/{id}          - 删除内容
+PUT    /api/v1/contents/{id}        - 更新内容
+DELETE /api/v1/contents/{id}        - 删除内容
 POST   /api/v1/contents/{id}/clone   - 克隆内容
 GET    /api/v1/contents/{id}/publish - 获取内容发布记录
 ```
@@ -179,35 +200,35 @@ GET    /api/v1/contents/{id}/publish - 获取内容发布记录
 
 ```
 POST   /api/v1/ai/generate          - 生成内容
-POST   /api/v1/ai/config             - AI 配置管理
-GET    /api/v1/ai/config             - 获取 AI 配置
+POST   /api/v1/ai/config            - AI 配置管理
+GET    /api/v1/ai/config            - 获取 AI 配置
 ```
 
 ### 4.3 发布服务 API
 
 ```
-POST   /api/v1/publish             - 发布内容
-GET    /api/v1/publish/task/{id}   - 获取发布任务状态
-GET    /api/v1/publish/platforms   - 获取支持的平台列表
+POST   /api/v1/publish               - 发布内容
+GET    /api/v1/publish/task/{id}     - 获取发布任务状态
+GET    /api/v1/publish/platforms     - 获取支持的平台列表
 ```
 
 ### 4.4 任务调度 API
 
 ```
-GET    /api/v1/scheduler/tasks     - 获取任务列表
-POST   /api/v1/scheduler/tasks     - 创建定时任务
-PUT    /api/v1/scheduler/tasks/{id} - 更新任务
-DELETE /api/v1/scheduler/tasks/{id} - 删除任务
+GET    /api/v1/scheduler/tasks       - 获取任务列表
+POST   /api/v1/scheduler/tasks       - 创建定时任务
+PUT    /api/v1/scheduler/tasks/{id}  - 更新任务
+DELETE /api/v1/scheduler/tasks/{id}  - 删除任务
 ```
 
 ## 5. 技术栈
 
 | 层级 | 技术 |
 |------|------|
-| **后端** | Rust, Actix Web / Tide |
-| **前端** | React, TypeScript, Vite, Ant Design |
-| **数据库** | PostgreSQL / SQLite |
-| **AI** | OpenAI API, Ollama API, Tongyi API |
+| **后端** | Go 1.21+, Gin Web Framework |
+| **数据库** | PostgreSQL / MySQL / SQLite, GORM |
+| **缓存** | Redis |
+| **AI** | OpenAI API, Ollama API, 通义千问 API |
 | **部署** | Docker, Docker Compose |
 | **CI/CD** | GitHub Actions |
 
@@ -217,12 +238,12 @@ DELETE /api/v1/scheduler/tasks/{id} - 删除任务
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                              用户                                   │
 └─────────────────────────────────────────────────────────────────────────┘
-                                     │
-                                     ▼
+                                      │
+                                      ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                           反向代理 (Nginx)                           │
 └─────────────────────────────────────────────────────────────────────────┘
-                                     │
+                                      │
         ┌──────────────────────────────┼──────────────────────────────────────┐
         │                              │                              │
         ▼                              ▼                              ▼
@@ -231,11 +252,11 @@ DELETE /api/v1/scheduler/tasks/{id} - 删除任务
 │                      Docker                         │    │                      Docker                         │
 │                    ┌───────────────┐  │    │                     ┌───────────────┐  │
 │                    │  Web App     │  │    │                     │   DB          │
-│                    │  (Rust)     │  │    │                     │  (PostgreSQL) │
+│                    │  (Go + Gin) │  │    │                     │  (PostgreSQL) │
 │                    └───────────────┘  │    │                     └───────────────┘  │
 │                                      │    │                                          │
 │                    ┌───────────────┐  │    │                     ┌───────────────┐  │
-│                    │  Redis      │  │    │                     │  Volume      │
+│                    │  Redis       │  │    │                     │  Volume      │
 │                    │  (Cache)    │  │    │                     │  (Data)     │
 │                    └───────────────┘  │    │                     └───────────────┘  │
 └────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
@@ -265,7 +286,7 @@ DELETE /api/v1/scheduler/tasks/{id} - 删除任务
 
 - API 鉴权 (JWT)
 - 数据加密存储
-- SQL 注入防护
+- SQL 注入防护 (GORM 参数化查询)
 - XSS 防护
 - CSRF 防护
 
@@ -274,7 +295,7 @@ DELETE /api/v1/scheduler/tasks/{id} - 删除任务
 - 插件化架构
 - 适配器模式
 - 事件驱动
-- 消息队列
+- 消息队列 (RabbitMQ / Kafka)
 
 ## 10. 未来规划
 

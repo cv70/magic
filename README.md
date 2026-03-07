@@ -1,6 +1,6 @@
 # AI Content Engine
 
-一个基于 Rust + Axum (后端) + React (前端) 的 AI 内容创作引擎。
+一个基于 Go + Gin (后端) + React (前端) 的 AI 内容创作引擎。
 
 ## 功能特性
 
@@ -14,12 +14,11 @@
 ## 技术栈
 
 ### 后端
-- [Axum](https://github.com/tokio-rs/axum) - 高性能 Rust Web 框架
-- [Tokio](https://tokio.rs/) - 异步运行时
-- [SQLx](https://github.com/launchbadge/sqlx) - 异步数据库驱动
-- [Redis](https://redis.io/) - 缓存服务
-- [Rustls](https://github.com/rustls/rustls) - TLS 库
-- [OpenAPI](https://www.openapis.org/) - API 文档
+- [Gin](https://github.com/gin-gonic/gin) - Go Web 框架
+- [GORM](https://gorm.io/) - Go ORM 库
+- [Go-Redis](https://github.com/redis/go-redis) - Redis 客户端
+- [validator](https://github.com/go-playground/validator) - 数据验证
+- [viper](https://github.com/spf13/viper) - 配置管理
 - [Docker](https://www.docker.com/) - 容器化
 
 ### 前端
@@ -32,9 +31,9 @@
 
 ### 环境要求
 
-- Rust 1.74+ (2024 Edition)
+- Go 1.21+
 - Node.js 18+ / Bun
-- PostgreSQL 14+
+- PostgreSQL 14+ / MySQL 8+ / SQLite
 - Docker 24+
 
 ### 本地开发
@@ -44,11 +43,12 @@
 git clone https://github.com/your-username/ai-content-engine.git
 cd ai-content-engine
 
-# 安装依赖
+# 后端开发
 cd backend
-cargo build --release
-cargo run --release -- --config ./config.yaml
+go mod tidy
+go run cmd/server/main.go --config config.yaml
 
+# 前端开发
 cd ../frontend
 npm install
 npm run dev
@@ -69,15 +69,20 @@ open http://localhost:3000
 
 ```
 ai-content-engine/
-├── backend/              # Rust 后端
-│   ├── src/
-│   │   ├── main.rs       # 主程序入口
-│   │   ├── api/          # API 路由
-│   │   ├── models/       # 数据模型
-│   │   ├── services/     # 业务逻辑
-│   │   ├── adapters/     # 外部服务适配器
-│   │   └── config.rs     # 配置管理
-│   ├── Cargo.toml       # Rust 依赖
+├── backend/              # Go 后端
+│   ├── cmd/
+│   │   └── server/      # 主程序入口
+│   │       └── main.go
+│   ├── internal/
+│   │   ├── config/      # 配置管理
+│   │   ├── handler/     # HTTP 处理器
+│   │   ├── middleware/  # 中间件
+│   │   ├── model/       # 数据模型
+│   │   ├── repository/  # 数据访问层
+│   │   ├── service/     # 业务逻辑
+│   │   └── router/      # 路由配置
+│   ├── go.mod           # Go 依赖
+│   ├── go.sum
 │   └── Dockerfile       # Docker 构建文件
 ├── frontend/             # React 前端
 │   ├── src/
@@ -92,13 +97,13 @@ ai-content-engine/
 ├── docker-compose.yml   # Docker Compose 配置
 ├── docker-compose.debug.yml # 调试用配置
 ├── docker-compose.prod.yml # 生产用配置
-├── .gitignore         # Git 忽略文件
-├── .rustfmt.toml      # Rust 格式化配置
-├── .prettierrc        # Prettier 配置
-├── .eslintrc.js       # ESLint 配置
-├── .dockerignore      # Docker 忽略文件
-├── .gitignore         # Git 忽略文件
+├── .gitignore
+├── .golangci.yml        # Go linter 配置
+├── .prettierrc          # Prettier 配置
+├── .eslintrc.js         # ESLint 配置
+├── .dockerignore
 ├── ARCHITECTURE.md      # 架构文档
+├── DOMAIN.md            # 领域层文档
 └── README.md            # 项目说明
 ```
 
@@ -119,7 +124,7 @@ curl -X POST http://localhost:8080/api/v1/publish
 
 ### YAML 配置文件（必需）
 
-```bash
+```yaml
 # backend/config.yaml
 server:
   env: dev
@@ -127,24 +132,17 @@ server:
   port: 8888
 
 database:
+  driver: postgres  # postgres / mysql / sqlite
   host: localhost
   user: root
   pass: pass
-  db_name: vc_backend
+  db_name: ai_content_engine
+  ssl_mode: disable
 
 redis:
   host: localhost
   port: 6379
-  pass: null
-
-vector:
-  host: localhost
-  api_key: ""
-
-scylla:
-  host: localhost
-  user: scylla
-  pass: scylla
+  password: ""
 
 llm:
   base_url: http://localhost:11434
@@ -154,16 +152,13 @@ llm:
 
 text_embedding:
   base_url: http://localhost:11434
-
-browser:
-  url: http://localhost:9222
 ```
 
 启动命令（必须传 `--config`）：
 
 ```bash
 cd backend
-cargo run --release -- --config ./config.yaml
+go run cmd/server/main.go --config ./config.yaml
 ```
 
 ## 安全建议
@@ -171,7 +166,7 @@ cargo run --release -- --config ./config.yaml
 - 🔒 使用 HTTPS 加密传输
 - 🔒 定期更新依赖包
 - 🔒 启用 CORS 策略
-- 🔒 验证用户输入
+- 🔒 验证用户输入 (使用 validator)
 - 🔒 使用 JWT 认证
 - 🔒 审计日志记录
 - 🔒 敏感信息加密
@@ -180,39 +175,39 @@ cargo run --release -- --config ./config.yaml
 
 ## 常见问题
 
-**Q: 如何添加新的 AI 提供商？
+**Q: 如何添加新的 AI 提供商？**
 
-A: 在 `backend/src/adapters/` 目录下创建新的适配器实现 `AIAdapter` trait
+A: 在 `backend/internal/adapters/` 目录下创建新的适配器实现 `AIAdapter` 接口
 
-**Q: 如何添加新的发布平台？
+**Q: 如何添加新的发布平台？**
 
-A: 在 `backend/src/adapters/publishers/` 目录下创建新的发布器实现 `Publisher` trait
+A: 在 `backend/internal/adapters/publishers/` 目录下创建新的发布器实现 `Publisher` 接口
 
-**Q: 如何配置多 AI 提供商？
+**Q: 如何配置多 AI 提供商？**
 
 A: 在 `backend/config.yaml` 里修改 `llm` 相关配置，并通过 `--config` 指定对应配置文件
 
-**Q: 如何配置定时发布？
+**Q: 如何配置定时发布？**
 
-A: 使用 `AIScheduler` 服务配置定时发布任务
+A: 使用 `SchedulerService` 服务配置定时发布任务
 
-**Q: 如何配置内容审核？
+**Q: 如何配置内容审核？**
 
 A: 使用 `ContentService` 服务配置内容审核规则
 
-**Q: 如何配置内容版本控制？
+**Q: 如何配置内容版本控制？**
 
 A: 使用 `ContentService` 服务配置版本控制策略
 
-**Q: 如何配置发布队列？
+**Q: 如何配置发布队列？**
 
 A: 使用 `PublisherService` 服务配置发布队列策略
 
-**Q: 如何配置发布重试？
+**Q: 如何配置发布重试？**
 
 A: 使用 `PublisherService` 服务配置重试策略
 
-**Q: 如何配置发布通知？
+**Q: 如何配置发布通知？**
 
 A: 使用 `PublisherService` 服务配置通知策略
 
